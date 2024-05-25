@@ -47,8 +47,13 @@ library
   import: common
   hs-source-dirs: lib
   build-depends:
+    , bytestring
+    , flatparse
   exposed-modules:
     , Ganache
+    , Ganache.Data
+    , Ganache.Parse
+    , Ganache.Print
 
 executable ganache
   import:
@@ -68,12 +73,17 @@ test-suite test
   main-is: Driver.hs
   hs-source-dirs: test
   build-depends:
+    , bytestring
+    , filepath
+    , flatparse
+    , ganache
     , hedgehog
+    , streamly-core
     , tasty
     , tasty-discover
     , tasty-hedgehog
     , tasty-hunit
-    , ganache
+    , unliftio
   other-modules:
     GanacheTest
 
