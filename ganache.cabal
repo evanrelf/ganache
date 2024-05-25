@@ -1,0 +1,91 @@
+cabal-version: 3.6
+
+name:        ganache
+version:     0.1.0.0
+-- synopsis:
+-- description:
+author:      Evan Relf <evan@evanrelf.com>
+maintainer:  Evan Relf <evan@evanrelf.com>
+homepage:    https://github.com/evanrelf/ganache
+license:     ISC
+copyright:   2024 Evan Relf
+
+common common
+  build-depends:
+    , base
+  default-language: GHC2021
+  default-extensions:
+    , BlockArguments
+    , DeriveAnyClass
+    , DerivingStrategies
+    , DerivingVia
+    , LambdaCase
+    , OverloadedRecordDot
+    , OverloadedStrings
+    , StrictData
+  ghc-options:
+    -Wall
+    -Wcompat
+    -Werror=incomplete-patterns
+    -Werror=incomplete-record-updates
+    -Werror=incomplete-uni-patterns
+    -Werror=missing-fields
+    -Werror=missing-methods
+    -Werror=partial-fields
+    -Widentities
+    -Wmissing-home-modules
+    -Wno-unticked-promoted-constructors
+    -Wredundant-constraints
+
+common executable
+  ghc-options:
+    -threaded
+    -rtsopts
+    -with-rtsopts=-N
+
+library
+  import: common
+  hs-source-dirs: src
+  build-depends:
+    , optparse-applicative
+  exposed-modules:
+    , Ganache
+
+executable ganache
+  import:
+    , common
+    , executable
+  main-is: src/Main.hs
+  build-depends:
+    , optparse-applicative
+    , ganache
+
+test-suite test
+  import:
+    , common
+    , executable
+  type: exitcode-stdio-1.0
+  main-is: Driver.hs
+  hs-source-dirs: test
+  build-depends:
+    , hedgehog
+    , tasty
+    , tasty-discover
+    , tasty-hedgehog
+    , tasty-hunit
+    , ganache
+  other-modules:
+    GanacheTest
+
+benchmark bench
+  import:
+    , common
+    , executable
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  hs-source-dirs: bench
+  build-depends:
+    , tasty-bench
+  ghc-options:
+    -fproc-alignment=64
+    -with-rtsopts=-A32m
