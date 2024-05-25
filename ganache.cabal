@@ -47,7 +47,6 @@ library
   import: common
   hs-source-dirs: src
   build-depends:
-    , optparse-applicative
   exposed-modules:
     , Ganache
 
