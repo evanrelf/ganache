@@ -5,7 +5,6 @@ module Ganache.Print
   , achBatch
   , achRecord
   , achBatchRecord
-  , achFileHeaderRecord
   , achBatchHeaderRecord
   , achEntryDetailRecord
   , achAddendaRecord
@@ -25,7 +24,7 @@ import Prelude hiding (print)
 achFile :: AchFile -> ByteString
 achFile x =
   Char8.unlines
-    [ achFileHeaderRecord x.header
+    [ print @AchFileHeaderRecord x.header
     , Char8.intercalate (Char8.singleton '\n') (fmap achBatch x.batches)
     , achFileControlRecord x.control
     , Char8.intercalate
@@ -44,7 +43,7 @@ achBatch x =
 
 achRecord :: AchRecord -> ByteString
 achRecord = \case
-  AchRecord.FileHeader x -> achFileHeaderRecord x
+  AchRecord.FileHeader x -> print @AchFileHeaderRecord x
   AchRecord.BatchHeader x -> achBatchHeaderRecord x
   AchRecord.EntryDetail x -> achEntryDetailRecord x
   AchRecord.Addenda x -> achAddendaRecord x
@@ -56,24 +55,6 @@ achBatchRecord :: AchBatchRecord -> ByteString
 achBatchRecord = \case
   AchBatchRecord.EntryDetail x -> achEntryDetailRecord x
   AchBatchRecord.Addenda x -> achAddendaRecord x
-
-achFileHeaderRecord :: AchFileHeaderRecord -> ByteString
-achFileHeaderRecord x =
-  mconcat
-    [ x.recordTypeCode
-    , x.priorityCode
-    , x.immediateDestination
-    , x.immediateOrigin
-    , x.fileCreationDate
-    , x.fileCreationTime
-    , x.fileIdModifier
-    , x.recordSize
-    , x.blockingFactor
-    , x.formatCode
-    , x.destination
-    , x.originOrCompanyName
-    , x.referenceCode
-    ]
 
 achBatchHeaderRecord :: AchBatchHeaderRecord -> ByteString
 achBatchHeaderRecord (AchBatchHeaderRecord bytes) = Char8.cons '5' bytes
