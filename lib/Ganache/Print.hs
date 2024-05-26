@@ -11,15 +11,16 @@ module Ganache.Print
   , achAddendaRecord
   , achBatchControlRecord
   , achFileControlRecord
-  , achFilePaddingRecord
   )
 where
 
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
+import Ganache.Class.Print
 import Ganache.Data
 import Ganache.Data.AchBatchRecord qualified as AchBatchRecord
 import Ganache.Data.AchRecord qualified as AchRecord
+import Prelude hiding (print)
 
 achFile :: AchFile -> ByteString
 achFile x =
@@ -29,7 +30,7 @@ achFile x =
     , achFileControlRecord x.control
     , Char8.intercalate
         (Char8.singleton '\n')
-        (replicate x.padding (achFilePaddingRecord AchFilePaddingRecord))
+        (replicate x.padding (print AchFilePaddingRecord))
     ]
 
 achBatch :: AchBatch -> ByteString
@@ -49,7 +50,7 @@ achRecord = \case
   AchRecord.Addenda x -> achAddendaRecord x
   AchRecord.BatchControl x -> achBatchControlRecord x
   AchRecord.FileControl x -> achFileControlRecord x
-  AchRecord.FilePadding x -> achFilePaddingRecord x
+  AchRecord.FilePadding x -> print @AchFilePaddingRecord x
 
 achBatchRecord :: AchBatchRecord -> ByteString
 achBatchRecord = \case
@@ -88,6 +89,3 @@ achBatchControlRecord (AchBatchControlRecord bytes) = Char8.cons '8' bytes
 
 achFileControlRecord :: AchFileControlRecord -> ByteString
 achFileControlRecord (AchFileControlRecord bytes) = Char8.cons '9' bytes
-
-achFilePaddingRecord :: AchFilePaddingRecord -> ByteString
-achFilePaddingRecord _ = Char8.replicate 94 '9'
