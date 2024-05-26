@@ -1,3 +1,6 @@
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE NoFieldSelectors #-}
+
 module Ganache.Data
   ( AchFile (..)
   , AchBatch (..)
@@ -16,16 +19,16 @@ where
 import Data.ByteString (ByteString)
 
 data AchFile = AchFile
-  { achFileHeader :: AchFileHeaderRecord
-  , achFileBatches :: [AchBatch]
-  , achFileControl :: AchFileControlRecord
-  , achFilePadding :: Int
+  { header :: AchFileHeaderRecord
+  , batches :: [AchBatch]
+  , control :: AchFileControlRecord
+  , padding :: Int
   }
 
 data AchBatch = AchBatch
-  { achBatchHeader :: AchBatchHeaderRecord
-  , achBatchRecords :: [AchBatchRecord]
-  , achBatchControl :: AchBatchControlRecord
+  { header :: AchBatchHeaderRecord
+  , records :: [AchBatchRecord]
+  , control :: AchBatchControlRecord
   }
 
 data AchRecord
@@ -42,19 +45,19 @@ data AchBatchRecord
   | AchBatchRecord_Addenda AchAddendaRecord
 
 data AchFileHeaderRecord = AchFileHeaderRecord
-  { achFileHeaderRecordRecordTypeCode :: ByteString
-  , achFileHeaderRecordPriorityCode :: ByteString
-  , achFileHeaderRecordImmediateDestination :: ByteString
-  , achFileHeaderRecordImmediateOrigin :: ByteString
-  , achFileHeaderRecordFileCreationDate :: ByteString
-  , achFileHeaderRecordFileCreationTime :: ByteString
-  , achFileHeaderRecordFileIdModifier :: ByteString
-  , achFileHeaderRecordRecordSize :: ByteString
-  , achFileHeaderRecordBlockingFactor :: ByteString
-  , achFileHeaderRecordFormatCode :: ByteString
-  , achFileHeaderRecordDestination :: ByteString
-  , achFileHeaderRecordOriginOrCompanyName :: ByteString
-  , achFileHeaderRecordReferenceCode :: ByteString
+  { recordTypeCode :: ByteString
+  , priorityCode :: ByteString
+  , immediateDestination :: ByteString
+  , immediateOrigin :: ByteString
+  , fileCreationDate :: ByteString
+  , fileCreationTime :: ByteString
+  , fileIdModifier :: ByteString
+  , recordSize :: ByteString
+  , blockingFactor :: ByteString
+  , formatCode :: ByteString
+  , destination :: ByteString
+  , originOrCompanyName :: ByteString
+  , referenceCode :: ByteString
   }
 
 newtype AchBatchHeaderRecord = AchBatchHeaderRecord ByteString

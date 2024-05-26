@@ -22,23 +22,21 @@ import Ganache.Data
 achFile :: AchFile -> ByteString
 achFile x =
   Char8.unlines
-    [ achFileHeaderRecord x.achFileHeader
-    , Char8.intercalate (Char8.singleton '\n') (fmap achBatch x.achFileBatches)
-    , achFileControlRecord x.achFileControl
+    [ achFileHeaderRecord x.header
+    , Char8.intercalate (Char8.singleton '\n') (fmap achBatch x.batches)
+    , achFileControlRecord x.control
     , Char8.intercalate
         (Char8.singleton '\n')
-        (replicate x.achFilePadding (achFilePaddingRecord AchFilePaddingRecord))
+        (replicate x.padding (achFilePaddingRecord AchFilePaddingRecord))
     ]
 
 achBatch :: AchBatch -> ByteString
 achBatch x =
   Char8.intercalate
     (Char8.singleton '\n')
-    [ achBatchHeaderRecord x.achBatchHeader
-    , Char8.intercalate
-        (Char8.singleton '\n')
-        (fmap achBatchRecord x.achBatchRecords)
-    , achBatchControlRecord x.achBatchControl
+    [ achBatchHeaderRecord x.header
+    , Char8.intercalate (Char8.singleton '\n') (fmap achBatchRecord x.records)
+    , achBatchControlRecord x.control
     ]
 
 achRecord :: AchRecord -> ByteString
@@ -59,19 +57,19 @@ achBatchRecord = \case
 achFileHeaderRecord :: AchFileHeaderRecord -> ByteString
 achFileHeaderRecord x =
   mconcat
-    [ x.achFileHeaderRecordRecordTypeCode
-    , x.achFileHeaderRecordPriorityCode
-    , x.achFileHeaderRecordImmediateDestination
-    , x.achFileHeaderRecordImmediateOrigin
-    , x.achFileHeaderRecordFileCreationDate
-    , x.achFileHeaderRecordFileCreationTime
-    , x.achFileHeaderRecordFileIdModifier
-    , x.achFileHeaderRecordRecordSize
-    , x.achFileHeaderRecordBlockingFactor
-    , x.achFileHeaderRecordFormatCode
-    , x.achFileHeaderRecordDestination
-    , x.achFileHeaderRecordOriginOrCompanyName
-    , x.achFileHeaderRecordReferenceCode
+    [ x.recordTypeCode
+    , x.priorityCode
+    , x.immediateDestination
+    , x.immediateOrigin
+    , x.fileCreationDate
+    , x.fileCreationTime
+    , x.fileIdModifier
+    , x.recordSize
+    , x.blockingFactor
+    , x.formatCode
+    , x.destination
+    , x.originOrCompanyName
+    , x.referenceCode
     ]
 
 achBatchHeaderRecord :: AchBatchHeaderRecord -> ByteString

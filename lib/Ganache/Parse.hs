@@ -47,52 +47,30 @@ achFileF = do
   header <- achFileHeaderRecordF <* $(F.char '\n')
   batches <- F.many achBatchF
   control <- achFileControlRecordF <* $(F.char '\n')
-  padding <- F.many (achFilePaddingRecordF <* $(F.char '\n'))
-  pure
-    AchFile
-      { achFileHeader = header
-      , achFileBatches = batches
-      , achFileControl = control
-      , achFilePadding = length padding
-      }
+  padding <- length <$> F.many (achFilePaddingRecordF <* $(F.char '\n'))
+  pure AchFile{..}
 
 achFileM :: M.Parsec Void ByteString AchFile
 achFileM = do
   header <- achFileHeaderRecordM <* M.newline
   batches <- M.many achBatchM
   control <- achFileControlRecordM <* M.newline
-  padding <- M.many (achFilePaddingRecordM <* M.newline)
-  pure
-    AchFile
-      { achFileHeader = header
-      , achFileBatches = batches
-      , achFileControl = control
-      , achFilePadding = length padding
-      }
+  padding <- length <$> M.many (achFilePaddingRecordM <* M.newline)
+  pure AchFile{..}
 
 achBatchF :: F.Parser () AchBatch
 achBatchF = do
   header <- achBatchHeaderRecordF <* $(F.char '\n')
   records <- F.many (achBatchRecordF <* $(F.char '\n'))
   control <- achBatchControlRecordF <* $(F.char '\n')
-  pure
-    AchBatch
-      { achBatchHeader = header
-      , achBatchRecords = records
-      , achBatchControl = control
-      }
+  pure AchBatch{..}
 
 achBatchM :: M.Parsec Void ByteString AchBatch
 achBatchM = do
   header <- achBatchHeaderRecordM <* M.newline
   records <- M.many (achBatchRecordM <* M.newline)
   control <- achBatchControlRecordM <* M.newline
-  pure
-    AchBatch
-      { achBatchHeader = header
-      , achBatchRecords = records
-      , achBatchControl = control
-      }
+  pure AchBatch{..}
 
 achRecordF :: F.Parser () AchRecord
 achRecordF = do
@@ -133,37 +111,37 @@ achBatchRecordM = entryDetail <|> addenda
 achFileHeaderRecordF :: F.Parser () AchFileHeaderRecord
 achFileHeaderRecordF = do
   $(F.char '1')
-  let achFileHeaderRecordRecordTypeCode = Char8.singleton '1'
-  achFileHeaderRecordPriorityCode <- F.take 2
-  achFileHeaderRecordImmediateDestination <- F.take 10
-  achFileHeaderRecordImmediateOrigin <- F.take 10
-  achFileHeaderRecordFileCreationDate <- F.take 6
-  achFileHeaderRecordFileCreationTime <- F.take 4
-  achFileHeaderRecordFileIdModifier <- F.take 1
-  achFileHeaderRecordRecordSize <- F.take 3
-  achFileHeaderRecordBlockingFactor <- F.take 2
-  achFileHeaderRecordFormatCode <- F.take 1
-  achFileHeaderRecordDestination <- F.take 23
-  achFileHeaderRecordOriginOrCompanyName <- F.take 23
-  achFileHeaderRecordReferenceCode <- F.take 8
+  let recordTypeCode = Char8.singleton '1'
+  priorityCode <- F.take 2
+  immediateDestination <- F.take 10
+  immediateOrigin <- F.take 10
+  fileCreationDate <- F.take 6
+  fileCreationTime <- F.take 4
+  fileIdModifier <- F.take 1
+  recordSize <- F.take 3
+  blockingFactor <- F.take 2
+  formatCode <- F.take 1
+  destination <- F.take 23
+  originOrCompanyName <- F.take 23
+  referenceCode <- F.take 8
   pure AchFileHeaderRecord{..}
 
 achFileHeaderRecordM :: M.Parsec Void ByteString AchFileHeaderRecord
 achFileHeaderRecordM = do
   _recordTypeCode <- M.char (c2w '1')
-  let achFileHeaderRecordRecordTypeCode = Char8.singleton '1'
-  achFileHeaderRecordPriorityCode <- M.takeP Nothing 2
-  achFileHeaderRecordImmediateDestination <- M.takeP Nothing 10
-  achFileHeaderRecordImmediateOrigin <- M.takeP Nothing 10
-  achFileHeaderRecordFileCreationDate <- M.takeP Nothing 6
-  achFileHeaderRecordFileCreationTime <- M.takeP Nothing 4
-  achFileHeaderRecordFileIdModifier <- M.takeP Nothing 1
-  achFileHeaderRecordRecordSize <- M.takeP Nothing 3
-  achFileHeaderRecordBlockingFactor <- M.takeP Nothing 2
-  achFileHeaderRecordFormatCode <- M.takeP Nothing 1
-  achFileHeaderRecordDestination <- M.takeP Nothing 23
-  achFileHeaderRecordOriginOrCompanyName <- M.takeP Nothing 23
-  achFileHeaderRecordReferenceCode <- M.takeP Nothing 8
+  let recordTypeCode = Char8.singleton '1'
+  priorityCode <- M.takeP Nothing 2
+  immediateDestination <- M.takeP Nothing 10
+  immediateOrigin <- M.takeP Nothing 10
+  fileCreationDate <- M.takeP Nothing 6
+  fileCreationTime <- M.takeP Nothing 4
+  fileIdModifier <- M.takeP Nothing 1
+  recordSize <- M.takeP Nothing 3
+  blockingFactor <- M.takeP Nothing 2
+  formatCode <- M.takeP Nothing 1
+  destination <- M.takeP Nothing 23
+  originOrCompanyName <- M.takeP Nothing 23
+  referenceCode <- M.takeP Nothing 8
   pure AchFileHeaderRecord{..}
 
 achBatchHeaderRecordF :: F.Parser () AchBatchHeaderRecord
