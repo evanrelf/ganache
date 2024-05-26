@@ -10,7 +10,6 @@ import Data.ByteString.Char8 qualified as Char8
 import FlatParse.Basic qualified as F
 import Ganache.Class.Parse
 import Ganache.Class.Print
-import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
 data AchFilePaddingRecord = AchFilePaddingRecord

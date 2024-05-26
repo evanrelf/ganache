@@ -6,11 +6,12 @@ import Data.ByteString (ByteString)
 import Data.ByteString qualified as ByteString
 import Data.Function ((&))
 import FlatParse.Basic qualified as FlatParse
+import Ganache.Class.Print (print)
 import Ganache.Parse qualified as Parse
-import Ganache.Print qualified as Print
 import Hedgehog hiding (test)
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
+import Prelude hiding (print)
 import Streamly.Data.Stream qualified as Stream
 import Streamly.Internal.FileSystem.Dir (readFiles)
 import System.FilePath ((</>))
@@ -33,14 +34,14 @@ test_roundtripExamples =
             FlatParse.Err () -> assertFailure "Parser error"
             FlatParse.OK achFile rest -> do
               assertEqual "No bytes leftover" ByteString.empty rest
-              assertEqual "Prints original file" bytes (Print.achFile achFile)
+              assertEqual "Prints original file" bytes (print achFile)
       , testCase "megaparsec" do
           case Megaparsec.runParser Parse.achFileM path bytes of
             Left err ->
               assertFailure
                 ("Parser error:\n" <> Megaparsec.errorBundlePretty err)
             Right achFile ->
-              assertEqual "Prints original file" bytes (Print.achFile achFile)
+              assertEqual "Prints original file" bytes (print achFile)
       ]
     )
   & Stream.toList

@@ -68,7 +68,6 @@ library
     , Ganache.Data.AchFilePaddingRecord
     , Ganache.Data.AchRecord
     , Ganache.Parse
-    , Ganache.Print
 
 executable ganache
   import:
