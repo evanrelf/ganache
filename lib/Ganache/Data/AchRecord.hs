@@ -15,7 +15,6 @@ import Ganache.Data.AchFileControlRecord (AchFileControlRecord (..))
 import Ganache.Data.AchFileHeaderRecord (AchFileHeaderRecord (..))
 import Ganache.Data.AchFilePaddingRecord (AchFilePaddingRecord (..))
 
-
 data AchRecord
   = FileHeader !AchFileHeaderRecord
   | BatchHeader !AchBatchHeaderRecord

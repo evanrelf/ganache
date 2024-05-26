@@ -6,9 +6,7 @@ import Data.ByteString (ByteString)
 import Data.ByteString qualified as ByteString
 import Data.Function ((&))
 import FlatParse.Basic qualified as FlatParse
-import Ganache.Class.FromAch
-import Ganache.Class.ToAch
-import Ganache.Data
+import Ganache
 import Hedgehog hiding (test)
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range

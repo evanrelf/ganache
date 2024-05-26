@@ -15,7 +15,6 @@ import Ganache.Data.AchBatch (AchBatch (..))
 import Ganache.Data.AchFileControlRecord (AchFileControlRecord (..))
 import Ganache.Data.AchFileHeaderRecord (AchFileHeaderRecord (..))
 import Ganache.Data.AchFilePaddingRecord (AchFilePaddingRecord (..))
-
 import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
