@@ -18,6 +18,8 @@ where
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
 import Ganache.Data
+import Ganache.Data.AchBatchRecord qualified as AchBatchRecord
+import Ganache.Data.AchRecord qualified as AchRecord
 
 achFile :: AchFile -> ByteString
 achFile x =
@@ -41,18 +43,18 @@ achBatch x =
 
 achRecord :: AchRecord -> ByteString
 achRecord = \case
-  AchRecord_FileHeader x -> achFileHeaderRecord x
-  AchRecord_BatchHeader x -> achBatchHeaderRecord x
-  AchRecord_EntryDetail x -> achEntryDetailRecord x
-  AchRecord_Addenda x -> achAddendaRecord x
-  AchRecord_BatchControl x -> achBatchControlRecord x
-  AchRecord_FileControl x -> achFileControlRecord x
-  AchRecord_FilePadding x -> achFilePaddingRecord x
+  AchRecord.FileHeader x -> achFileHeaderRecord x
+  AchRecord.BatchHeader x -> achBatchHeaderRecord x
+  AchRecord.EntryDetail x -> achEntryDetailRecord x
+  AchRecord.Addenda x -> achAddendaRecord x
+  AchRecord.BatchControl x -> achBatchControlRecord x
+  AchRecord.FileControl x -> achFileControlRecord x
+  AchRecord.FilePadding x -> achFilePaddingRecord x
 
 achBatchRecord :: AchBatchRecord -> ByteString
 achBatchRecord = \case
-  AchBatchRecord_EntryDetail x -> achEntryDetailRecord x
-  AchBatchRecord_Addenda x -> achAddendaRecord x
+  AchBatchRecord.EntryDetail x -> achEntryDetailRecord x
+  AchBatchRecord.Addenda x -> achAddendaRecord x
 
 achFileHeaderRecord :: AchFileHeaderRecord -> ByteString
 achFileHeaderRecord x =

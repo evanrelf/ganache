@@ -39,6 +39,8 @@ import Data.ByteString.Internal (c2w)
 import Data.Void (Void)
 import FlatParse.Basic qualified as F
 import Ganache.Data
+import Ganache.Data.AchBatchRecord qualified as AchBatchRecord
+import Ganache.Data.AchRecord qualified as AchRecord
 import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
@@ -75,38 +77,38 @@ achBatchM = do
 achRecordF :: F.Parser () AchRecord
 achRecordF = do
   asum
-    [ AchRecord_FileHeader <$> achFileHeaderRecordF
-    , AchRecord_BatchHeader <$> achBatchHeaderRecordF
-    , AchRecord_EntryDetail <$> achEntryDetailRecordF
-    , AchRecord_Addenda <$> achAddendaRecordF
-    , AchRecord_BatchControl <$> achBatchControlRecordF
-    , AchRecord_FileControl <$> achFileControlRecordF
-    , AchRecord_FilePadding <$> achFilePaddingRecordF
+    [ AchRecord.FileHeader <$> achFileHeaderRecordF
+    , AchRecord.BatchHeader <$> achBatchHeaderRecordF
+    , AchRecord.EntryDetail <$> achEntryDetailRecordF
+    , AchRecord.Addenda <$> achAddendaRecordF
+    , AchRecord.BatchControl <$> achBatchControlRecordF
+    , AchRecord.FileControl <$> achFileControlRecordF
+    , AchRecord.FilePadding <$> achFilePaddingRecordF
     ]
 
 achRecordM :: M.Parsec Void ByteString AchRecord
 achRecordM = do
   asum
-    [ AchRecord_FileHeader <$> achFileHeaderRecordM
-    , AchRecord_BatchHeader <$> achBatchHeaderRecordM
-    , AchRecord_EntryDetail <$> achEntryDetailRecordM
-    , AchRecord_Addenda <$> achAddendaRecordM
-    , AchRecord_BatchControl <$> achBatchControlRecordM
-    , AchRecord_FileControl <$> achFileControlRecordM
-    , AchRecord_FilePadding <$> achFilePaddingRecordM
+    [ AchRecord.FileHeader <$> achFileHeaderRecordM
+    , AchRecord.BatchHeader <$> achBatchHeaderRecordM
+    , AchRecord.EntryDetail <$> achEntryDetailRecordM
+    , AchRecord.Addenda <$> achAddendaRecordM
+    , AchRecord.BatchControl <$> achBatchControlRecordM
+    , AchRecord.FileControl <$> achFileControlRecordM
+    , AchRecord.FilePadding <$> achFilePaddingRecordM
     ]
 
 achBatchRecordF :: F.Parser () AchBatchRecord
 achBatchRecordF = entryDetail <|> addenda
   where
-  entryDetail = AchBatchRecord_EntryDetail <$> achEntryDetailRecordF
-  addenda = AchBatchRecord_Addenda <$> achAddendaRecordF
+  entryDetail = AchBatchRecord.EntryDetail <$> achEntryDetailRecordF
+  addenda = AchBatchRecord.Addenda <$> achAddendaRecordF
 
 achBatchRecordM :: M.Parsec Void ByteString AchBatchRecord
 achBatchRecordM = entryDetail <|> addenda
   where
-  entryDetail = AchBatchRecord_EntryDetail <$> achEntryDetailRecordM
-  addenda = AchBatchRecord_Addenda <$> achAddendaRecordM
+  entryDetail = AchBatchRecord.EntryDetail <$> achEntryDetailRecordM
+  addenda = AchBatchRecord.Addenda <$> achAddendaRecordM
 
 achFileHeaderRecordF :: F.Parser () AchFileHeaderRecord
 achFileHeaderRecordF = do

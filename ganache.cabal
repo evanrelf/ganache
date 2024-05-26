@@ -20,6 +20,7 @@ common common
     , DerivingStrategies
     , DerivingVia
     , LambdaCase
+    , NoFieldSelectors
     , OverloadedRecordDot
     , OverloadedStrings
     , StrictData
@@ -53,6 +54,17 @@ library
   exposed-modules:
     , Ganache
     , Ganache.Data
+    , Ganache.Data.AchAddendaRecord
+    , Ganache.Data.AchBatch
+    , Ganache.Data.AchBatchControlRecord
+    , Ganache.Data.AchBatchHeaderRecord
+    , Ganache.Data.AchBatchRecord
+    , Ganache.Data.AchEntryDetailRecord
+    , Ganache.Data.AchFile
+    , Ganache.Data.AchFileControlRecord
+    , Ganache.Data.AchFileHeaderRecord
+    , Ganache.Data.AchFilePaddingRecord
+    , Ganache.Data.AchRecord
     , Ganache.Parse
     , Ganache.Print
 
