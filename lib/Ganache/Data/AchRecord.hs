@@ -17,13 +17,13 @@ import Ganache.Data.AchFilePaddingRecord (AchFilePaddingRecord (..))
 
 
 data AchRecord
-  = FileHeader AchFileHeaderRecord
-  | BatchHeader AchBatchHeaderRecord
-  | EntryDetail AchEntryDetailRecord
-  | Addenda AchAddendaRecord
-  | BatchControl AchBatchControlRecord
-  | FileControl AchFileControlRecord
-  | FilePadding AchFilePaddingRecord
+  = FileHeader !AchFileHeaderRecord
+  | BatchHeader !AchBatchHeaderRecord
+  | EntryDetail !AchEntryDetailRecord
+  | Addenda !AchAddendaRecord
+  | BatchControl !AchBatchControlRecord
+  | FileControl !AchFileControlRecord
+  | FilePadding !AchFilePaddingRecord
 
 instance FromAch AchRecord where
   parseAchF :: ParserF AchRecord

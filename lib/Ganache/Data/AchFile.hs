@@ -20,10 +20,10 @@ import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
 data AchFile = AchFile
-  { header :: AchFileHeaderRecord
-  , batches :: [AchBatch]
-  , control :: AchFileControlRecord
-  , padding :: Int
+  { header :: !AchFileHeaderRecord
+  , batches :: ![AchBatch]
+  , control :: !AchFileControlRecord
+  , padding :: !Int
   }
 
 instance FromAch AchFile where

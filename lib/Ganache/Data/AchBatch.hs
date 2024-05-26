@@ -19,9 +19,9 @@ import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
 data AchBatch = AchBatch
-  { header :: AchBatchHeaderRecord
-  , records :: [AchBatchRecord]
-  , control :: AchBatchControlRecord
+  { header :: !AchBatchHeaderRecord
+  , records :: ![AchBatchRecord]
+  , control :: !AchBatchControlRecord
   }
 
 instance FromAch AchBatch where

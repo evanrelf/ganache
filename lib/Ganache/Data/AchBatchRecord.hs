@@ -12,8 +12,8 @@ import Ganache.Data.AchEntryDetailRecord (AchEntryDetailRecord (..))
 
 
 data AchBatchRecord
-  = EntryDetail AchEntryDetailRecord
-  | Addenda AchAddendaRecord
+  = EntryDetail !AchEntryDetailRecord
+  | Addenda !AchAddendaRecord
 
 instance FromAch AchBatchRecord where
   parseAchF :: ParserF AchBatchRecord

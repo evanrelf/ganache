@@ -23,7 +23,6 @@ common common
     , NoFieldSelectors
     , OverloadedRecordDot
     , OverloadedStrings
-    , StrictData
   ghc-options:
     -Wall
     -Wcompat

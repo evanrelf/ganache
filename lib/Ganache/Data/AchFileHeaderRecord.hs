@@ -16,19 +16,19 @@ import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
 data AchFileHeaderRecord = AchFileHeaderRecord
-  { recordTypeCode :: ByteString
-  , priorityCode :: ByteString
-  , immediateDestination :: ByteString
-  , immediateOrigin :: ByteString
-  , fileCreationDate :: ByteString
-  , fileCreationTime :: ByteString
-  , fileIdModifier :: ByteString
-  , recordSize :: ByteString
-  , blockingFactor :: ByteString
-  , formatCode :: ByteString
-  , destination :: ByteString
-  , originOrCompanyName :: ByteString
-  , referenceCode :: ByteString
+  { recordTypeCode :: !ByteString
+  , priorityCode :: !ByteString
+  , immediateDestination :: !ByteString
+  , immediateOrigin :: !ByteString
+  , fileCreationDate :: !ByteString
+  , fileCreationTime :: !ByteString
+  , fileIdModifier :: !ByteString
+  , recordSize :: !ByteString
+  , blockingFactor :: !ByteString
+  , formatCode :: !ByteString
+  , destination :: !ByteString
+  , originOrCompanyName :: !ByteString
+  , referenceCode :: !ByteString
   }
 
 instance FromAch AchFileHeaderRecord where
