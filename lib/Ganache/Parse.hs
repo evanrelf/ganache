@@ -1,4 +1,5 @@
 {-# LANGUAGE NoOverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 -- TODO
@@ -132,14 +133,38 @@ achBatchRecordM = entryDetail <|> addenda
 achFileHeaderRecordF :: F.Parser () AchFileHeaderRecord
 achFileHeaderRecordF = do
   $(F.char '1')
-  bytes <- F.take 93
-  pure $ AchFileHeaderRecord bytes
+  let achFileHeaderRecordRecordTypeCode = Char8.singleton '1'
+  achFileHeaderRecordPriorityCode <- F.take 2
+  achFileHeaderRecordImmediateDestination <- F.take 10
+  achFileHeaderRecordImmediateOrigin <- F.take 10
+  achFileHeaderRecordFileCreationDate <- F.take 6
+  achFileHeaderRecordFileCreationTime <- F.take 4
+  achFileHeaderRecordFileIdModifier <- F.take 1
+  achFileHeaderRecordRecordSize <- F.take 3
+  achFileHeaderRecordBlockingFactor <- F.take 2
+  achFileHeaderRecordFormatCode <- F.take 1
+  achFileHeaderRecordDestination <- F.take 23
+  achFileHeaderRecordOriginOrCompanyName <- F.take 23
+  achFileHeaderRecordReferenceCode <- F.take 8
+  pure AchFileHeaderRecord{..}
 
 achFileHeaderRecordM :: M.Parsec Void ByteString AchFileHeaderRecord
 achFileHeaderRecordM = do
-  _ <- M.char (c2w '1')
-  bytes <- M.takeP Nothing 93
-  pure $ AchFileHeaderRecord bytes
+  _recordTypeCode <- M.char (c2w '1')
+  let achFileHeaderRecordRecordTypeCode = Char8.singleton '1'
+  achFileHeaderRecordPriorityCode <- M.takeP Nothing 2
+  achFileHeaderRecordImmediateDestination <- M.takeP Nothing 10
+  achFileHeaderRecordImmediateOrigin <- M.takeP Nothing 10
+  achFileHeaderRecordFileCreationDate <- M.takeP Nothing 6
+  achFileHeaderRecordFileCreationTime <- M.takeP Nothing 4
+  achFileHeaderRecordFileIdModifier <- M.takeP Nothing 1
+  achFileHeaderRecordRecordSize <- M.takeP Nothing 3
+  achFileHeaderRecordBlockingFactor <- M.takeP Nothing 2
+  achFileHeaderRecordFormatCode <- M.takeP Nothing 1
+  achFileHeaderRecordDestination <- M.takeP Nothing 23
+  achFileHeaderRecordOriginOrCompanyName <- M.takeP Nothing 23
+  achFileHeaderRecordReferenceCode <- M.takeP Nothing 8
+  pure AchFileHeaderRecord{..}
 
 achBatchHeaderRecordF :: F.Parser () AchBatchHeaderRecord
 achBatchHeaderRecordF = do

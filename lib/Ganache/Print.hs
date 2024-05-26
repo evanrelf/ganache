@@ -57,7 +57,22 @@ achBatchRecord = \case
   AchBatchRecord_Addenda x -> achAddendaRecord x
 
 achFileHeaderRecord :: AchFileHeaderRecord -> ByteString
-achFileHeaderRecord (AchFileHeaderRecord bytes) = Char8.cons '1' bytes
+achFileHeaderRecord x =
+  mconcat
+    [ x.achFileHeaderRecordRecordTypeCode
+    , x.achFileHeaderRecordPriorityCode
+    , x.achFileHeaderRecordImmediateDestination
+    , x.achFileHeaderRecordImmediateOrigin
+    , x.achFileHeaderRecordFileCreationDate
+    , x.achFileHeaderRecordFileCreationTime
+    , x.achFileHeaderRecordFileIdModifier
+    , x.achFileHeaderRecordRecordSize
+    , x.achFileHeaderRecordBlockingFactor
+    , x.achFileHeaderRecordFormatCode
+    , x.achFileHeaderRecordDestination
+    , x.achFileHeaderRecordOriginOrCompanyName
+    , x.achFileHeaderRecordReferenceCode
+    ]
 
 achBatchHeaderRecord :: AchBatchHeaderRecord -> ByteString
 achBatchHeaderRecord (AchBatchHeaderRecord bytes) = Char8.cons '5' bytes

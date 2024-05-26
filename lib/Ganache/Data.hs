@@ -41,7 +41,21 @@ data AchBatchRecord
   = AchBatchRecord_EntryDetail AchEntryDetailRecord
   | AchBatchRecord_Addenda AchAddendaRecord
 
-newtype AchFileHeaderRecord = AchFileHeaderRecord ByteString
+data AchFileHeaderRecord = AchFileHeaderRecord
+  { achFileHeaderRecordRecordTypeCode :: ByteString
+  , achFileHeaderRecordPriorityCode :: ByteString
+  , achFileHeaderRecordImmediateDestination :: ByteString
+  , achFileHeaderRecordImmediateOrigin :: ByteString
+  , achFileHeaderRecordFileCreationDate :: ByteString
+  , achFileHeaderRecordFileCreationTime :: ByteString
+  , achFileHeaderRecordFileIdModifier :: ByteString
+  , achFileHeaderRecordRecordSize :: ByteString
+  , achFileHeaderRecordBlockingFactor :: ByteString
+  , achFileHeaderRecordFormatCode :: ByteString
+  , achFileHeaderRecordDestination :: ByteString
+  , achFileHeaderRecordOriginOrCompanyName :: ByteString
+  , achFileHeaderRecordReferenceCode :: ByteString
+  }
 
 newtype AchBatchHeaderRecord = AchBatchHeaderRecord ByteString
 
