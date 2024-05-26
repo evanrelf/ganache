@@ -17,6 +17,8 @@ import System.FilePath ((</>))
 import System.FilePath qualified as FilePath
 import Test.Tasty
 import Test.Tasty.HUnit
+import Text.Megaparsec qualified as Megaparsec
+import Text.Megaparsec.Error qualified as Megaparsec (errorBundlePretty)
 
 test_roundtripExamples :: IO [TestTree]
 test_roundtripExamples =
@@ -24,12 +26,21 @@ test_roundtripExamples =
   & fmap (\path -> "examples" </> path)
   & Stream.filter (\path -> "ach" `FilePath.isExtensionOf` path)
   & Stream.mapM (\path -> (path,) <$> ByteString.readFile path)
-  & fmap (\(path, bytes) -> testCase path do
-      case FlatParse.runParser Parse.achFile bytes of
-        FlatParse.Fail -> assertFailure "Parser failure"
-        FlatParse.Err () -> assertFailure "Parser error"
-        FlatParse.OK achFile rest -> do
-          assertEqual "No bytes leftover" ByteString.empty rest
-          assertEqual "Roundtrips successfully" bytes (Print.achFile achFile)
+  & fmap (\(path, bytes) -> testGroup path
+      [ testCase "flatparse" do
+          case FlatParse.runParser Parse.achFileF bytes of
+            FlatParse.Fail -> assertFailure "Parser failure"
+            FlatParse.Err () -> assertFailure "Parser error"
+            FlatParse.OK achFile rest -> do
+              assertEqual "No bytes leftover" ByteString.empty rest
+              assertEqual "Prints original file" bytes (Print.achFile achFile)
+      , testCase "megaparsec" do
+          case Megaparsec.runParser Parse.achFileM path bytes of
+            Left err ->
+              assertFailure
+                ("Parser error:\n" <> Megaparsec.errorBundlePretty err)
+            Right achFile ->
+              assertEqual "Prints original file" bytes (Print.achFile achFile)
+      ]
     )
   & Stream.toList

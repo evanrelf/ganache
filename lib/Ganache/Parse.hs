@@ -1,30 +1,52 @@
+{-# LANGUAGE NoOverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 
+-- TODO
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
+
 module Ganache.Parse
-  ( achFile
-  , achBatch
-  , achRecord
-  , achBatchRecord
-  , achFileHeaderRecord
-  , achBatchHeaderRecord
-  , achEntryDetailRecord
-  , achAddendaRecord
-  , achBatchControlRecord
-  , achFileControlRecord
-  , achFilePaddingRecord
+  ( achFileF
+  , achBatchF
+  , achRecordF
+  , achBatchRecordF
+  , achFileHeaderRecordF
+  , achBatchHeaderRecordF
+  , achEntryDetailRecordF
+  , achAddendaRecordF
+  , achBatchControlRecordF
+  , achFileControlRecordF
+  , achFilePaddingRecordF
+
+  , achFileM
+  , achBatchM
+  , achRecordM
+  , achBatchRecordM
+  , achFileHeaderRecordM
+  , achBatchHeaderRecordM
+  , achEntryDetailRecordM
+  , achAddendaRecordM
+  , achBatchControlRecordM
+  , achFileControlRecordM
+  , achFilePaddingRecordM
   )
 where
 
 import Control.Applicative (Alternative (..), asum)
+import Data.ByteString (ByteString)
+import Data.ByteString.Char8 qualified as Char8
+import Data.ByteString.Internal (c2w)
+import Data.Void (Void)
 import FlatParse.Basic qualified as F
 import Ganache.Data
+import Text.Megaparsec qualified as M
+import Text.Megaparsec.Byte qualified as M
 
-achFile :: F.Parser () AchFile
-achFile = do
-  header <- achFileHeaderRecord <* $(F.char '\n')
-  batches <- F.many achBatch
-  control <- achFileControlRecord <* $(F.char '\n')
-  padding <- F.many (achFilePaddingRecord <* $(F.char '\n'))
+achFileF :: F.Parser () AchFile
+achFileF = do
+  header <- achFileHeaderRecordF <* $(F.char '\n')
+  batches <- F.many achBatchF
+  control <- achFileControlRecordF <* $(F.char '\n')
+  padding <- F.many (achFilePaddingRecordF <* $(F.char '\n'))
   pure
     AchFile
       { achFileHeader = header
@@ -33,11 +55,25 @@ achFile = do
       , achFilePadding = length padding
       }
 
-achBatch :: F.Parser () AchBatch
-achBatch = do
-  header <- achBatchHeaderRecord <* $(F.char '\n')
-  records <- F.many (achBatchRecord <* $(F.char '\n'))
-  control <- achBatchControlRecord <* $(F.char '\n')
+achFileM :: M.Parsec Void ByteString AchFile
+achFileM = do
+  header <- achFileHeaderRecordM <* M.newline
+  batches <- M.many achBatchM
+  control <- achFileControlRecordM <* M.newline
+  padding <- M.many (achFilePaddingRecordM <* M.newline)
+  pure
+    AchFile
+      { achFileHeader = header
+      , achFileBatches = batches
+      , achFileControl = control
+      , achFilePadding = length padding
+      }
+
+achBatchF :: F.Parser () AchBatch
+achBatchF = do
+  header <- achBatchHeaderRecordF <* $(F.char '\n')
+  records <- F.many (achBatchRecordF <* $(F.char '\n'))
+  control <- achBatchControlRecordF <* $(F.char '\n')
   pure
     AchBatch
       { achBatchHeader = header
@@ -45,64 +81,135 @@ achBatch = do
       , achBatchControl = control
       }
 
-achRecord :: F.Parser () AchRecord
-achRecord = do
+achBatchM :: M.Parsec Void ByteString AchBatch
+achBatchM = do
+  header <- achBatchHeaderRecordM <* M.newline
+  records <- M.many (achBatchRecordM <* M.newline)
+  control <- achBatchControlRecordM <* M.newline
+  pure
+    AchBatch
+      { achBatchHeader = header
+      , achBatchRecords = records
+      , achBatchControl = control
+      }
+
+achRecordF :: F.Parser () AchRecord
+achRecordF = do
   asum
-    [ AchRecord_FileHeader <$> achFileHeaderRecord
-    , AchRecord_BatchHeader <$> achBatchHeaderRecord
-    , AchRecord_EntryDetail <$> achEntryDetailRecord
-    , AchRecord_Addenda <$> achAddendaRecord
-    , AchRecord_BatchControl <$> achBatchControlRecord
-    , AchRecord_FileControl <$> achFileControlRecord
-    , AchRecord_FilePadding <$> achFilePaddingRecord
+    [ AchRecord_FileHeader <$> achFileHeaderRecordF
+    , AchRecord_BatchHeader <$> achBatchHeaderRecordF
+    , AchRecord_EntryDetail <$> achEntryDetailRecordF
+    , AchRecord_Addenda <$> achAddendaRecordF
+    , AchRecord_BatchControl <$> achBatchControlRecordF
+    , AchRecord_FileControl <$> achFileControlRecordF
+    , AchRecord_FilePadding <$> achFilePaddingRecordF
     ]
 
-achBatchRecord :: F.Parser () AchBatchRecord
-achBatchRecord = entryDetail <|> addenda
-  where
-  entryDetail = AchBatchRecord_EntryDetail <$> achEntryDetailRecord
-  addenda = AchBatchRecord_Addenda <$> achAddendaRecord
+achRecordM :: M.Parsec Void ByteString AchRecord
+achRecordM = do
+  asum
+    [ AchRecord_FileHeader <$> achFileHeaderRecordM
+    , AchRecord_BatchHeader <$> achBatchHeaderRecordM
+    , AchRecord_EntryDetail <$> achEntryDetailRecordM
+    , AchRecord_Addenda <$> achAddendaRecordM
+    , AchRecord_BatchControl <$> achBatchControlRecordM
+    , AchRecord_FileControl <$> achFileControlRecordM
+    , AchRecord_FilePadding <$> achFilePaddingRecordM
+    ]
 
-achFileHeaderRecord :: F.Parser () AchFileHeaderRecord
-achFileHeaderRecord = do
+achBatchRecordF :: F.Parser () AchBatchRecord
+achBatchRecordF = entryDetail <|> addenda
+  where
+  entryDetail = AchBatchRecord_EntryDetail <$> achEntryDetailRecordF
+  addenda = AchBatchRecord_Addenda <$> achAddendaRecordF
+
+achBatchRecordM :: M.Parsec Void ByteString AchBatchRecord
+achBatchRecordM = entryDetail <|> addenda
+  where
+  entryDetail = AchBatchRecord_EntryDetail <$> achEntryDetailRecordM
+  addenda = AchBatchRecord_Addenda <$> achAddendaRecordM
+
+achFileHeaderRecordF :: F.Parser () AchFileHeaderRecord
+achFileHeaderRecordF = do
   $(F.char '1')
   bytes <- F.take 93
   pure $ AchFileHeaderRecord bytes
 
-achBatchHeaderRecord :: F.Parser () AchBatchHeaderRecord
-achBatchHeaderRecord = do
+achFileHeaderRecordM :: M.Parsec Void ByteString AchFileHeaderRecord
+achFileHeaderRecordM = do
+  _ <- M.char (c2w '1')
+  bytes <- M.takeP Nothing 93
+  pure $ AchFileHeaderRecord bytes
+
+achBatchHeaderRecordF :: F.Parser () AchBatchHeaderRecord
+achBatchHeaderRecordF = do
   $(F.char '5')
   bytes <- F.take 93
   pure $ AchBatchHeaderRecord bytes
 
-achEntryDetailRecord :: F.Parser () AchEntryDetailRecord
-achEntryDetailRecord = do
+achBatchHeaderRecordM :: M.Parsec Void ByteString AchBatchHeaderRecord
+achBatchHeaderRecordM = do
+  _ <- M.char (c2w '5')
+  bytes <- M.takeP Nothing 93
+  pure $ AchBatchHeaderRecord bytes
+
+achEntryDetailRecordF :: F.Parser () AchEntryDetailRecord
+achEntryDetailRecordF = do
   $(F.char '6')
   bytes <- F.take 93
   pure $ AchEntryDetailRecord bytes
 
-achAddendaRecord :: F.Parser () AchAddendaRecord
-achAddendaRecord = do
+achEntryDetailRecordM :: M.Parsec Void ByteString AchEntryDetailRecord
+achEntryDetailRecordM = do
+  _ <- M.char (c2w '6')
+  bytes <- M.takeP Nothing 93
+  pure $ AchEntryDetailRecord bytes
+
+achAddendaRecordF :: F.Parser () AchAddendaRecord
+achAddendaRecordF = do
   $(F.char '7')
   bytes <- F.take 93
   pure $ AchAddendaRecord bytes
 
-achBatchControlRecord :: F.Parser () AchBatchControlRecord
-achBatchControlRecord = do
+achAddendaRecordM :: M.Parsec Void ByteString AchAddendaRecord
+achAddendaRecordM = do
+  _ <- M.char (c2w '7')
+  bytes <- M.takeP Nothing 93
+  pure $ AchAddendaRecord bytes
+
+achBatchControlRecordF :: F.Parser () AchBatchControlRecord
+achBatchControlRecordF = do
   $(F.char '8')
   bytes <- F.take 93
+  pure $ AchBatchControlRecord bytes
+
+achBatchControlRecordM :: M.Parsec Void ByteString AchBatchControlRecord
+achBatchControlRecordM = do
+  _ <- M.char (c2w '8')
+  bytes <- M.takeP Nothing 93
   pure $ AchBatchControlRecord bytes
 
 -- TODO: Currently nothing to disambiguate a file control record from a file
 -- padding record
 
-achFileControlRecord :: F.Parser () AchFileControlRecord
-achFileControlRecord = do
+achFileControlRecordF :: F.Parser () AchFileControlRecord
+achFileControlRecordF = do
   $(F.char '9')
   bytes <- F.take 93
   pure $ AchFileControlRecord bytes
 
-achFilePaddingRecord :: F.Parser () AchFilePaddingRecord
-achFilePaddingRecord = do
+achFileControlRecordM :: M.Parsec Void ByteString AchFileControlRecord
+achFileControlRecordM = do
+  _ <- M.char (c2w '9')
+  bytes <- M.takeP Nothing 93
+  pure $ AchFileControlRecord bytes
+
+achFilePaddingRecordF :: F.Parser () AchFilePaddingRecord
+achFilePaddingRecordF = do
   $(F.string (replicate 94 '9'))
+  pure AchFilePaddingRecord
+
+achFilePaddingRecordM :: M.Parsec Void ByteString AchFilePaddingRecord
+achFilePaddingRecordM = do
+  _ <- M.string (Char8.replicate 94 '9')
   pure AchFilePaddingRecord

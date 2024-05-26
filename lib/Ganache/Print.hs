@@ -1,3 +1,5 @@
+{-# LANGUAGE NoOverloadedStrings #-}
+
 module Ganache.Print
   ( achFile
   , achBatch

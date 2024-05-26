@@ -49,6 +49,7 @@ library
   build-depends:
     , bytestring
     , flatparse
+    , megaparsec
   exposed-modules:
     , Ganache
     , Ganache.Data
@@ -78,6 +79,7 @@ test-suite test
     , flatparse
     , ganache
     , hedgehog
+    , megaparsec
     , streamly-core
     , tasty
     , tasty-discover
