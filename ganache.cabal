@@ -53,6 +53,8 @@ library
     , megaparsec
   exposed-modules:
     , Ganache
+    , Ganache.Class.Parse
+    , Ganache.Class.Print
     , Ganache.Data
     , Ganache.Data.AchAddendaRecord
     , Ganache.Data.AchBatch
