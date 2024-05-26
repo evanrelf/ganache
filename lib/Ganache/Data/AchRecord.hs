@@ -3,6 +3,7 @@ module Ganache.Data.AchRecord
   )
 where
 
+import Control.Applicative (asum)
 import Data.ByteString (ByteString)
 import Ganache.Class.Parse
 import Ganache.Class.Print
@@ -26,12 +27,28 @@ data AchRecord
 
 instance Parse AchRecord where
   parseF :: ParserF AchRecord
-  parseF = do
-    undefined
+  parseF =
+    asum
+      [ FileHeader <$> parseF @AchFileHeaderRecord
+      , BatchHeader <$> parseF @AchBatchHeaderRecord
+      , EntryDetail <$> parseF @AchEntryDetailRecord
+      , Addenda <$> parseF @AchAddendaRecord
+      , BatchControl <$> parseF @AchBatchControlRecord
+      , FileControl <$> parseF @AchFileControlRecord
+      , FilePadding <$> parseF @AchFilePaddingRecord
+      ]
 
   parseM :: ParserM AchRecord
-  parseM = do
-    undefined
+  parseM =
+    asum
+      [ FileHeader <$> parseM @AchFileHeaderRecord
+      , BatchHeader <$> parseM @AchBatchHeaderRecord
+      , EntryDetail <$> parseM @AchEntryDetailRecord
+      , Addenda <$> parseM @AchAddendaRecord
+      , BatchControl <$> parseM @AchBatchControlRecord
+      , FileControl <$> parseM @AchFileControlRecord
+      , FilePadding <$> parseM @AchFilePaddingRecord
+      ]
 
 instance Print AchRecord where
   print :: AchRecord -> ByteString

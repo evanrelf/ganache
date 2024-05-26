@@ -3,6 +3,7 @@ module Ganache.Data.AchBatchRecord
   )
 where
 
+import Control.Applicative ((<|>))
 import Data.ByteString (ByteString)
 import Ganache.Class.Parse
 import Ganache.Class.Print
@@ -16,12 +17,16 @@ data AchBatchRecord
 
 instance Parse AchBatchRecord where
   parseF :: ParserF AchBatchRecord
-  parseF = do
-    undefined
+  parseF = entryDetail <|> addenda
+    where
+    entryDetail = EntryDetail <$> parseF @AchEntryDetailRecord
+    addenda = Addenda <$> parseF @AchAddendaRecord
 
   parseM :: ParserM AchBatchRecord
-  parseM = do
-    undefined
+  parseM = entryDetail <|> addenda
+    where
+    entryDetail = EntryDetail <$> parseM @AchEntryDetailRecord
+    addenda = Addenda <$> parseM @AchAddendaRecord
 
 instance Print AchBatchRecord where
   print :: AchBatchRecord -> ByteString

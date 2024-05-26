@@ -6,8 +6,9 @@ import Data.ByteString (ByteString)
 import Data.ByteString qualified as ByteString
 import Data.Function ((&))
 import FlatParse.Basic qualified as FlatParse
-import Ganache.Class.Print (print)
-import Ganache.Parse qualified as Parse
+import Ganache.Class.Parse
+import Ganache.Class.Print
+import Ganache.Data
 import Hedgehog hiding (test)
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
@@ -29,14 +30,14 @@ test_roundtripExamples =
   & Stream.mapM (\path -> (path,) <$> ByteString.readFile path)
   & fmap (\(path, bytes) -> testGroup path
       [ testCase "flatparse" do
-          case FlatParse.runParser Parse.achFileF bytes of
+          case FlatParse.runParser (parseF @AchFile) bytes of
             FlatParse.Fail -> assertFailure "Parser failure"
             FlatParse.Err () -> assertFailure "Parser error"
             FlatParse.OK achFile rest -> do
               assertEqual "No bytes leftover" ByteString.empty rest
               assertEqual "Prints original file" bytes (print achFile)
       , testCase "megaparsec" do
-          case Megaparsec.runParser Parse.achFileM path bytes of
+          case Megaparsec.runParser (parseM @AchFile) path bytes of
             Left err ->
               assertFailure
                 ("Parser error:\n" <> Megaparsec.errorBundlePretty err)
