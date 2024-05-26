@@ -8,23 +8,23 @@ where
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
 import FlatParse.Basic qualified as F
-import Ganache.Class.Parse
-import Ganache.Class.Print
+import Ganache.Class.FromAch
+import Ganache.Class.ToAch
 import Text.Megaparsec.Byte qualified as M
 
 data AchFilePaddingRecord = AchFilePaddingRecord
 
-instance Parse AchFilePaddingRecord where
-  parseF :: ParserF AchFilePaddingRecord
-  parseF = do
+instance FromAch AchFilePaddingRecord where
+  parseAchF :: ParserF AchFilePaddingRecord
+  parseAchF = do
     $(F.string (replicate 94 '9'))
     pure AchFilePaddingRecord
 
-  parseM :: ParserM AchFilePaddingRecord
-  parseM = do
+  parseAchM :: ParserM AchFilePaddingRecord
+  parseAchM = do
     _ <- M.string (Char8.replicate 94 '9')
     pure AchFilePaddingRecord
 
-instance Print AchFilePaddingRecord where
-  print :: AchFilePaddingRecord -> ByteString
-  print _ = Char8.replicate 94 '9'
+instance ToAch AchFilePaddingRecord where
+  toAch :: AchFilePaddingRecord -> ByteString
+  toAch _ = Char8.replicate 94 '9'

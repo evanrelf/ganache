@@ -5,8 +5,8 @@ where
 
 import Control.Applicative (asum)
 import Data.ByteString (ByteString)
-import Ganache.Class.Parse
-import Ganache.Class.Print
+import Ganache.Class.FromAch
+import Ganache.Class.ToAch
 import Ganache.Data.AchAddendaRecord (AchAddendaRecord (..))
 import Ganache.Data.AchBatchControlRecord (AchBatchControlRecord (..))
 import Ganache.Data.AchBatchHeaderRecord (AchBatchHeaderRecord (..))
@@ -14,7 +14,7 @@ import Ganache.Data.AchEntryDetailRecord (AchEntryDetailRecord (..))
 import Ganache.Data.AchFileControlRecord (AchFileControlRecord (..))
 import Ganache.Data.AchFileHeaderRecord (AchFileHeaderRecord (..))
 import Ganache.Data.AchFilePaddingRecord (AchFilePaddingRecord (..))
-import Prelude hiding (print)
+
 
 data AchRecord
   = FileHeader AchFileHeaderRecord
@@ -25,38 +25,38 @@ data AchRecord
   | FileControl AchFileControlRecord
   | FilePadding AchFilePaddingRecord
 
-instance Parse AchRecord where
-  parseF :: ParserF AchRecord
-  parseF =
+instance FromAch AchRecord where
+  parseAchF :: ParserF AchRecord
+  parseAchF =
     asum
-      [ FileHeader <$> parseF @AchFileHeaderRecord
-      , BatchHeader <$> parseF @AchBatchHeaderRecord
-      , EntryDetail <$> parseF @AchEntryDetailRecord
-      , Addenda <$> parseF @AchAddendaRecord
-      , BatchControl <$> parseF @AchBatchControlRecord
-      , FileControl <$> parseF @AchFileControlRecord
-      , FilePadding <$> parseF @AchFilePaddingRecord
+      [ FileHeader <$> parseAchF @AchFileHeaderRecord
+      , BatchHeader <$> parseAchF @AchBatchHeaderRecord
+      , EntryDetail <$> parseAchF @AchEntryDetailRecord
+      , Addenda <$> parseAchF @AchAddendaRecord
+      , BatchControl <$> parseAchF @AchBatchControlRecord
+      , FileControl <$> parseAchF @AchFileControlRecord
+      , FilePadding <$> parseAchF @AchFilePaddingRecord
       ]
 
-  parseM :: ParserM AchRecord
-  parseM =
+  parseAchM :: ParserM AchRecord
+  parseAchM =
     asum
-      [ FileHeader <$> parseM @AchFileHeaderRecord
-      , BatchHeader <$> parseM @AchBatchHeaderRecord
-      , EntryDetail <$> parseM @AchEntryDetailRecord
-      , Addenda <$> parseM @AchAddendaRecord
-      , BatchControl <$> parseM @AchBatchControlRecord
-      , FileControl <$> parseM @AchFileControlRecord
-      , FilePadding <$> parseM @AchFilePaddingRecord
+      [ FileHeader <$> parseAchM @AchFileHeaderRecord
+      , BatchHeader <$> parseAchM @AchBatchHeaderRecord
+      , EntryDetail <$> parseAchM @AchEntryDetailRecord
+      , Addenda <$> parseAchM @AchAddendaRecord
+      , BatchControl <$> parseAchM @AchBatchControlRecord
+      , FileControl <$> parseAchM @AchFileControlRecord
+      , FilePadding <$> parseAchM @AchFilePaddingRecord
       ]
 
-instance Print AchRecord where
-  print :: AchRecord -> ByteString
-  print = \case
-    FileHeader x -> print @AchFileHeaderRecord x
-    BatchHeader x -> print @AchBatchHeaderRecord x
-    EntryDetail x -> print @AchEntryDetailRecord x
-    Addenda x -> print @AchAddendaRecord x
-    BatchControl x -> print @AchBatchControlRecord x
-    FileControl x -> print @AchFileControlRecord x
-    FilePadding x -> print @AchFilePaddingRecord x
+instance ToAch AchRecord where
+  toAch :: AchRecord -> ByteString
+  toAch = \case
+    FileHeader x -> toAch @AchFileHeaderRecord x
+    BatchHeader x -> toAch @AchBatchHeaderRecord x
+    EntryDetail x -> toAch @AchEntryDetailRecord x
+    Addenda x -> toAch @AchAddendaRecord x
+    BatchControl x -> toAch @AchBatchControlRecord x
+    FileControl x -> toAch @AchFileControlRecord x
+    FilePadding x -> toAch @AchFilePaddingRecord x

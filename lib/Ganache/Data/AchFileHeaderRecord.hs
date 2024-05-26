@@ -10,8 +10,8 @@ import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
 import Data.ByteString.Internal (c2w)
 import FlatParse.Basic qualified as F
-import Ganache.Class.Parse
-import Ganache.Class.Print
+import Ganache.Class.FromAch
+import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
@@ -31,9 +31,9 @@ data AchFileHeaderRecord = AchFileHeaderRecord
   , referenceCode :: ByteString
   }
 
-instance Parse AchFileHeaderRecord where
-  parseF :: ParserF AchFileHeaderRecord
-  parseF = do
+instance FromAch AchFileHeaderRecord where
+  parseAchF :: ParserF AchFileHeaderRecord
+  parseAchF = do
     $(F.char '1')
     let recordTypeCode = Char8.singleton '1'
     priorityCode <- F.take 2
@@ -50,8 +50,8 @@ instance Parse AchFileHeaderRecord where
     referenceCode <- F.take 8
     pure AchFileHeaderRecord{..}
 
-  parseM :: ParserM AchFileHeaderRecord
-  parseM = do
+  parseAchM :: ParserM AchFileHeaderRecord
+  parseAchM = do
     _ <- M.char (c2w '1')
     let recordTypeCode = Char8.singleton '1'
     priorityCode <- M.takeP Nothing 2
@@ -68,9 +68,9 @@ instance Parse AchFileHeaderRecord where
     referenceCode <- M.takeP Nothing 8
     pure AchFileHeaderRecord{..}
 
-instance Print AchFileHeaderRecord where
-  print :: AchFileHeaderRecord -> ByteString
-  print x =
+instance ToAch AchFileHeaderRecord where
+  toAch :: AchFileHeaderRecord -> ByteString
+  toAch x =
     mconcat
       [ x.recordTypeCode
       , x.priorityCode

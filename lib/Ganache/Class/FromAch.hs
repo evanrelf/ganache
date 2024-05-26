@@ -1,7 +1,7 @@
-module Ganache.Class.Parse
+module Ganache.Class.FromAch
   ( ParserF
   , ParserM
-  , Parse (..)
+  , FromAch (..)
   )
 where
 
@@ -14,6 +14,6 @@ type ParserF = F.Parser ()
 
 type ParserM = M.Parsec Void ByteString
 
-class Parse a where
-  parseF :: ParserF a
-  parseM :: ParserM a
+class FromAch a where
+  parseAchF :: ParserF a
+  parseAchM :: ParserM a

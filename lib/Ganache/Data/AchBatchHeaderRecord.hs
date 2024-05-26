@@ -9,26 +9,26 @@ import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
 import Data.ByteString.Internal (c2w)
 import FlatParse.Basic qualified as F
-import Ganache.Class.Parse
-import Ganache.Class.Print
+import Ganache.Class.FromAch
+import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
 newtype AchBatchHeaderRecord = AchBatchHeaderRecord ByteString
 
-instance Parse AchBatchHeaderRecord where
-  parseF :: ParserF AchBatchHeaderRecord
-  parseF = do
+instance FromAch AchBatchHeaderRecord where
+  parseAchF :: ParserF AchBatchHeaderRecord
+  parseAchF = do
     $(F.char '5')
     bytes <- F.take 93
     pure $ AchBatchHeaderRecord bytes
 
-  parseM :: ParserM AchBatchHeaderRecord
-  parseM = do
+  parseAchM :: ParserM AchBatchHeaderRecord
+  parseAchM = do
     _ <- M.char (c2w '5')
     bytes <- M.takeP Nothing 93
     pure $ AchBatchHeaderRecord bytes
 
-instance Print AchBatchHeaderRecord where
-  print :: AchBatchHeaderRecord -> ByteString
-  print (AchBatchHeaderRecord bytes) = Char8.cons '5' bytes
+instance ToAch AchBatchHeaderRecord where
+  toAch :: AchBatchHeaderRecord -> ByteString
+  toAch (AchBatchHeaderRecord bytes) = Char8.cons '5' bytes
