@@ -13,6 +13,7 @@ import Ganache.Data.AchEntryDetailRecord (AchEntryDetailRecord (..))
 data AchBatchRecord
   = EntryDetail !AchEntryDetailRecord
   | Addenda !AchAddendaRecord
+  deriving stock (Show, Eq)
 
 instance FromAch AchBatchRecord where
   parseAchF :: ParserF AchBatchRecord

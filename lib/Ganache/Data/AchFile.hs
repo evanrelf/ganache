@@ -24,6 +24,7 @@ data AchFile = AchFile
   , control :: !AchFileControlRecord
   , padding :: !Int
   }
+  deriving stock (Show, Eq)
 
 instance FromAch AchFile where
   parseAchF :: ParserF AchFile

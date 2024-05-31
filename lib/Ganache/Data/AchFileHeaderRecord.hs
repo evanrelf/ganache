@@ -30,6 +30,7 @@ data AchFileHeaderRecord = AchFileHeaderRecord
   , originOrCompanyName :: !ByteString
   , referenceCode :: !ByteString
   }
+  deriving stock (Show, Eq)
 
 instance FromAch AchFileHeaderRecord where
   parseAchF :: ParserF AchFileHeaderRecord

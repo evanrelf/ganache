@@ -15,6 +15,7 @@ import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
 newtype AchEntryDetailRecord = AchEntryDetailRecord ByteString
+  deriving stock (Show, Eq)
 
 instance FromAch AchEntryDetailRecord where
   parseAchF :: ParserF AchEntryDetailRecord

@@ -28,6 +28,7 @@ data AchBatchControlRecord = AchBatchControlRecord
   , originatingDfiIdentification :: !ByteString
   , batchNumber :: !ByteString
   }
+  deriving stock (Show, Eq)
 
 instance FromAch AchBatchControlRecord where
   parseAchF :: ParserF AchBatchControlRecord

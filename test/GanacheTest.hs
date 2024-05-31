@@ -17,7 +17,6 @@ import System.FilePath qualified as FilePath
 import Test.Tasty
 import Test.Tasty.HUnit
 import Text.Megaparsec qualified as Megaparsec
-import Text.Megaparsec.Error qualified as Megaparsec (errorBundlePretty)
 
 test_roundtripExamples :: IO [TestTree]
 test_roundtripExamples =

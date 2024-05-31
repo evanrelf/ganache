@@ -37,6 +37,16 @@ common common
     -Wno-unticked-promoted-constructors
     -Wredundant-constraints
 
+common relude
+  build-depends:
+    , base
+    , relude
+  mixins:
+    , base hiding (Prelude)
+    , relude (Relude as Prelude)
+    , relude
+  default-extensions: OverloadedStrings
+
 common executable
   ghc-options:
     -threaded
@@ -71,16 +81,25 @@ executable ganache
   import:
     , common
     , executable
+    , relude
   hs-source-dirs: exe
   main-is: Main.hs
   build-depends:
-    , optparse-applicative
+    , bytestring
+    , flatparse
     , ganache
+    , megaparsec
+    , optparse-applicative
+    , pretty-simple
+  other-modules:
+    , Options
 
 test-suite test
   import:
     , common
     , executable
+    -- TODO
+    -- , relude
   type: exitcode-stdio-1.0
   main-is: Driver.hs
   hs-source-dirs: test

@@ -15,6 +15,7 @@ import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
 newtype AchBatchHeaderRecord = AchBatchHeaderRecord ByteString
+  deriving stock (Show, Eq)
 
 instance FromAch AchBatchHeaderRecord where
   parseAchF :: ParserF AchBatchHeaderRecord

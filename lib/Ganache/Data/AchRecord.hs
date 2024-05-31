@@ -23,6 +23,7 @@ data AchRecord
   | BatchControl !AchBatchControlRecord
   | FileControl !AchFileControlRecord
   | FilePadding !AchFilePaddingRecord
+  deriving stock (Show, Eq)
 
 instance FromAch AchRecord where
   parseAchF :: ParserF AchRecord

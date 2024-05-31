@@ -13,6 +13,7 @@ import Ganache.Class.ToAch
 import Text.Megaparsec.Byte qualified as M
 
 data AchFilePaddingRecord = AchFilePaddingRecord
+  deriving stock (Show, Eq)
 
 instance FromAch AchFilePaddingRecord where
   parseAchF :: ParserF AchFilePaddingRecord

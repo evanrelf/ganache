@@ -22,6 +22,7 @@ data AchBatch = AchBatch
   , records :: ![AchBatchRecord]
   , control :: !AchBatchControlRecord
   }
+  deriving stock (Show, Eq)
 
 instance FromAch AchBatch where
   parseAchF :: ParserF AchBatch

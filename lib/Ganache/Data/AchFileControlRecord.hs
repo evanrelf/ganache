@@ -25,6 +25,7 @@ data AchFileControlRecord = AchFileControlRecord
   , totalCredit :: !ByteString
   , reserved :: !ByteString
   }
+  deriving stock (Show, Eq)
 
 instance FromAch AchFileControlRecord where
   parseAchF :: ParserF AchFileControlRecord
