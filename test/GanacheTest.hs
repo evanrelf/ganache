@@ -1,15 +1,8 @@
-{-# OPTIONS_GHC -Wno-unused-imports #-}
-
 module GanacheTest (module GanacheTest) where
 
-import Data.ByteString (ByteString)
 import Data.ByteString qualified as ByteString
-import Data.Function ((&))
 import FlatParse.Basic qualified as FlatParse
 import Ganache
-import Hedgehog hiding (test)
-import Hedgehog.Gen qualified as Gen
-import Hedgehog.Range qualified as Range
 import Streamly.Data.Stream qualified as Stream
 import Streamly.Internal.FileSystem.Dir (readFiles)
 import System.FilePath ((</>))
@@ -26,19 +19,31 @@ test_roundtripExamples =
   & Stream.mapM (\path -> (path,) <$> ByteString.readFile path)
   & fmap (\(path, bytes) -> testGroup path
       [ testCase "flatparse" do
-          case FlatParse.runParser (parseAchF @AchFile) bytes of
-            FlatParse.Fail -> assertFailure "Parser failure"
-            FlatParse.Err () -> assertFailure "Parser error"
-            FlatParse.OK achFile rest -> do
-              assertEqual "No bytes leftover" ByteString.empty rest
-              assertEqual "Prints original file" bytes (toAch achFile)
+          achFile <- flatparse @AchFile bytes
+          assertEqual "Prints original file" bytes (toAch achFile)
       , testCase "megaparsec" do
-          case Megaparsec.runParser (parseAchM @AchFile) path bytes of
-            Left err ->
-              assertFailure
-                ("Parser error:\n" <> Megaparsec.errorBundlePretty err)
-            Right achFile ->
-              assertEqual "Prints original file" bytes (toAch achFile)
+          achFile <- megaparsec @AchFile path bytes
+          assertEqual "Prints original file" bytes (toAch achFile)
+      , testCase "flatparse and megaparsec agree" do
+          achFileF <- flatparse @AchFile bytes
+          achFileM <- megaparsec @AchFile path bytes
+          assertEqual "flatparse and megaparsec agree" achFileF achFileM
       ]
     )
   & Stream.toList
+
+flatparse :: forall a. FromAch a => ByteString -> IO a
+flatparse bytes =
+  case FlatParse.runParser (parseAchF @a) bytes of
+    FlatParse.Fail -> assertFailure "Parser failure"
+    FlatParse.Err () -> assertFailure "Parser error"
+    FlatParse.OK x rest -> do
+      assertEqual "No bytes leftover" ByteString.empty rest
+      pure x
+
+megaparsec :: forall a. FromAch a => FilePath -> ByteString -> IO a
+megaparsec path bytes =
+  case Megaparsec.runParser (parseAchM @a) path bytes of
+    Left err ->
+      assertFailure ("Parser error:\n" <> Megaparsec.errorBundlePretty err)
+    Right x -> pure x
