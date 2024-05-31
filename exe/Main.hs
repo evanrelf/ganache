@@ -12,14 +12,14 @@ main = do
   options <- getOptions
 
   case options.command of
-    Parse parseOptions -> parseMain options.common parseOptions
+    Parse parseOptions -> parseMain parseOptions
 
-parseMain :: CommonOptions -> ParseOptions -> IO ()
-parseMain _commonOptions parseOptions = do
-  bytes <- ByteString.readFile parseOptions.file
+parseMain :: ParseOptions -> IO ()
+parseMain parseOptions = do
+  bytes <- readFileBS parseOptions.file
 
   putTextLn "Parsing with flatparse..."
-  flatparseAchFile <-
+  achFileF <-
     case FlatParse.runParser (parseAchF @AchFile) bytes of
       FlatParse.Fail -> die "error: Parser failure"
       FlatParse.Err () -> die "error: Parser error"
@@ -31,7 +31,7 @@ parseMain _commonOptions parseOptions = do
   putTextLn ""
 
   putTextLn "Parsing with megaparsec..."
-  megaparsecAchFile <-
+  achFileM <-
     case Megaparsec.runParser (parseAchM @AchFile) parseOptions.file bytes of
       Left err ->
         die ("error: Parser error:\n" <> Megaparsec.errorBundlePretty err)
@@ -47,11 +47,11 @@ parseMain _commonOptions parseOptions = do
             { PrettySimple.outputOptionsStringStyle = PrettySimple.Literal
             }
 
-  if flatparseAchFile == megaparsecAchFile then do
-    pPrint flatparseAchFile
+  if achFileF == achFileM then do
+    pPrint achFileF
   else do
     putTextLn "warning: flatparse and megaparsec disagree\n"
     putTextLn "What flatparse got:"
-    pPrint flatparseAchFile
+    pPrint achFileF
     putTextLn "What megaparsec got:"
-    pPrint megaparsecAchFile
+    pPrint achFileM

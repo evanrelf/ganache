@@ -3,7 +3,6 @@
 
 module Options
   ( Options (..)
-  , CommonOptions (..)
   , Command (..)
   , ParseOptions (..)
   , getOptions
@@ -13,12 +12,7 @@ where
 import Options.Applicative qualified as O
 
 data Options = Options
-  { common :: CommonOptions
-  , command :: Command
-  }
-
-data CommonOptions = CommonOptions
-  {
+  { command :: Command
   }
 
 data Command
@@ -30,15 +24,9 @@ data ParseOptions = ParseOptions
 
 parseOptions :: O.Parser Options
 parseOptions = do
-  common <- parseCommonOptions
-
   command <- parseCommand
 
   pure Options{..}
-
-parseCommonOptions :: O.Parser CommonOptions
-parseCommonOptions = do
-  pure CommonOptions{}
 
 parseCommand :: O.Parser Command
 parseCommand =

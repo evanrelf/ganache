@@ -4,7 +4,7 @@ import Data.ByteString qualified as ByteString
 import FlatParse.Basic qualified as FlatParse
 import Ganache
 import Streamly.Data.Stream qualified as Stream
-import Streamly.Internal.FileSystem.Dir (readFiles)
+import Streamly.Internal.FileSystem.Dir qualified as Streamly (readFiles)
 import System.FilePath ((</>))
 import System.FilePath qualified as FilePath
 import Test.Tasty
@@ -13,7 +13,7 @@ import Text.Megaparsec qualified as Megaparsec
 
 test_roundtripExamples :: IO [TestTree]
 test_roundtripExamples =
-    readFiles "examples/"
+    Streamly.readFiles "examples/"
   & fmap (\path -> "examples" </> path)
   & Stream.filter (\path -> "ach" `FilePath.isExtensionOf` path)
   & Stream.mapM (\path -> (path,) <$> ByteString.readFile path)
