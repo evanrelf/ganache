@@ -108,9 +108,11 @@ test-suite test
     , flatparse
     , ganache
     , megaparsec
+    , safe-exceptions
     , streamly-core
     , tasty
     , tasty-discover
+    , tasty-expected-failure
     , tasty-hunit
     , unliftio
   other-modules:
