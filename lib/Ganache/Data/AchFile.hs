@@ -19,6 +19,9 @@ import Ganache.Data.AchFilePaddingRecord (AchFilePaddingRecord (..))
 import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
+-- TODO: Count trailing newlines
+-- TODO: Limit number of padding records to match spec
+
 data AchFile = AchFile
   { header :: !AchFileHeaderRecord
   , batches :: ![AchBatch]
