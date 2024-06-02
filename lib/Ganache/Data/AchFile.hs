@@ -8,6 +8,7 @@ where
 
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
+import Data.Maybe (fromMaybe)
 import FlatParse.Basic qualified as F
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
@@ -31,16 +32,22 @@ instance FromAch AchFile where
   parseAchF = do
     header <- parseAchF @AchFileHeaderRecord <* $(F.char '\n')
     batches <- F.many (parseAchF @AchBatch)
-    control <- parseAchF @AchFileControlRecord <* $(F.char '\n')
-    padding <- length <$> F.many (parseAchF @AchFilePaddingRecord <* $(F.char '\n'))
+    control <- parseAchF @AchFileControlRecord
+    padding <- fromMaybe 0 <$> F.optional do
+      $(F.char '\n')
+      length <$> parseAchF @AchFilePaddingRecord `M.sepEndBy` $(F.char '\n')
+    F.eof
     pure AchFile{..}
 
   parseAchM :: ParserM AchFile
   parseAchM = do
     header <- parseAchM @AchFileHeaderRecord <* M.newline
     batches <- M.many (parseAchM @AchBatch)
-    control <- parseAchM @AchFileControlRecord <* M.newline
-    padding <- length <$> M.many (parseAchM @AchFilePaddingRecord <* M.newline)
+    control <- parseAchM @AchFileControlRecord
+    padding <- fromMaybe 0 <$> M.optional do
+      _ <- M.newline
+      length <$> parseAchM @AchFilePaddingRecord `M.sepEndBy` M.newline
+    M.eof
     pure AchFile{..}
 
 instance ToAch AchFile where

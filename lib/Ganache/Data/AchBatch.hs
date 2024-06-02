@@ -28,14 +28,14 @@ instance FromAch AchBatch where
   parseAchF :: ParserF AchBatch
   parseAchF = do
     header <- parseAchF @AchBatchHeaderRecord <* $(F.char '\n')
-    records <- F.many (parseAchF @AchBatchRecord <* $(F.char '\n'))
+    records <- parseAchF @AchBatchRecord `M.endBy` $(F.char '\n')
     control <- parseAchF @AchBatchControlRecord <* $(F.char '\n')
     pure AchBatch{..}
 
   parseAchM :: ParserM AchBatch
   parseAchM = do
     header <- parseAchM @AchBatchHeaderRecord <* M.newline
-    records <- M.many (parseAchM @AchBatchRecord <* M.newline)
+    records <- parseAchM @AchBatchRecord `M.endBy` M.newline
     control <- parseAchM @AchBatchControlRecord <* M.newline
     pure AchBatch{..}
 
