@@ -8,7 +8,6 @@ where
 
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
-import FlatParse.Basic qualified as F
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Ganache.Data.AchBatch (AchBatch (..))
@@ -31,24 +30,13 @@ data AchFile = AchFile
   deriving stock (Show, Eq)
 
 instance FromAch AchFile where
-  parseAchF :: ParserF AchFile
-  parseAchF = do
-    header <- parseAchF @AchFileHeaderRecord <* $(F.char '\n')
-    batches <- F.many (parseAchF @AchBatch)
-    control <- parseAchF @AchFileControlRecord
+  parseAch :: Parser AchFile
+  parseAch = do
+    header <- parseAch @AchFileHeaderRecord <* M.newline
+    batches <- M.many (parseAch @AchBatch)
+    control <- parseAch @AchFileControlRecord
     padding <- length <$>
-      F.many ($(F.char '\n') *> parseAchF @AchFilePaddingRecord)
-    newlines <- length <$> F.many $(F.char '\n')
-    F.eof
-    pure AchFile{..}
-
-  parseAchM :: ParserM AchFile
-  parseAchM = do
-    header <- parseAchM @AchFileHeaderRecord <* M.newline
-    batches <- M.many (parseAchM @AchBatch)
-    control <- parseAchM @AchFileControlRecord
-    padding <- length <$>
-      M.many (M.try (M.newline *> parseAchM @AchFilePaddingRecord))
+      M.many (M.try (M.newline *> parseAch @AchFilePaddingRecord))
     newlines <- length <$> M.many M.newline
     M.eof
     pure AchFile{..}

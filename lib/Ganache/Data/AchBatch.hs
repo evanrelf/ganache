@@ -8,7 +8,6 @@ where
 
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
-import FlatParse.Basic qualified as F
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Ganache.Data.AchBatchControlRecord (AchBatchControlRecord (..))
@@ -27,18 +26,11 @@ data AchBatch = AchBatch
   deriving stock (Show, Eq)
 
 instance FromAch AchBatch where
-  parseAchF :: ParserF AchBatch
-  parseAchF = do
-    header <- parseAchF @AchBatchHeaderRecord <* $(F.char '\n')
-    records <- parseAchF @AchBatchRecord `M.endBy` $(F.char '\n')
-    control <- parseAchF @AchBatchControlRecord <* $(F.char '\n')
-    pure AchBatch{..}
-
-  parseAchM :: ParserM AchBatch
-  parseAchM = do
-    header <- parseAchM @AchBatchHeaderRecord <* M.newline
-    records <- parseAchM @AchBatchRecord `M.endBy` M.newline
-    control <- parseAchM @AchBatchControlRecord <* M.newline
+  parseAch :: Parser AchBatch
+  parseAch = do
+    header <- parseAch @AchBatchHeaderRecord <* M.newline
+    records <- parseAch @AchBatchRecord `M.endBy` M.newline
+    control <- parseAch @AchBatchControlRecord <* M.newline
     pure AchBatch{..}
 
 instance ToAch AchBatch where

@@ -8,7 +8,6 @@ where
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
 import Data.ByteString.Internal (c2w)
-import FlatParse.Basic qualified as F
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
@@ -18,14 +17,8 @@ newtype AchAddendaRecord = AchAddendaRecord ByteString
   deriving stock (Show, Eq)
 
 instance FromAch AchAddendaRecord where
-  parseAchF :: ParserF AchAddendaRecord
-  parseAchF = do
-    $(F.char '7')
-    bytes <- F.take 93
-    pure $ AchAddendaRecord bytes
-
-  parseAchM :: ParserM AchAddendaRecord
-  parseAchM = do
+  parseAch :: Parser AchAddendaRecord
+  parseAch = do
     _ <- M.char (c2w '7')
     bytes <- M.takeP Nothing 93
     pure $ AchAddendaRecord bytes

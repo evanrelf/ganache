@@ -58,7 +58,6 @@ library
   hs-source-dirs: lib
   build-depends:
     , bytestring
-    , flatparse
     , megaparsec
   exposed-modules:
     , Ganache
@@ -86,7 +85,6 @@ executable ganache
   main-is: Main.hs
   build-depends:
     , bytestring
-    , flatparse
     , ganache
     , megaparsec
     , optparse-applicative
@@ -105,7 +103,6 @@ test-suite test
   build-depends:
     , bytestring
     , filepath
-    , flatparse
     , ganache
     , megaparsec
     , safe-exceptions

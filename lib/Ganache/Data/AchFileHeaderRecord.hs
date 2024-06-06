@@ -9,7 +9,6 @@ where
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
 import Data.ByteString.Internal (c2w)
-import FlatParse.Basic qualified as F
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
@@ -33,26 +32,8 @@ data AchFileHeaderRecord = AchFileHeaderRecord
   deriving stock (Show, Eq)
 
 instance FromAch AchFileHeaderRecord where
-  parseAchF :: ParserF AchFileHeaderRecord
-  parseAchF = do
-    $(F.char '1')
-    let recordTypeCode = Char8.singleton '1'
-    priorityCode <- F.take 2
-    immediateDestination <- F.take 10
-    immediateOrigin <- F.take 10
-    fileCreationDate <- F.take 6
-    fileCreationTime <- F.take 4
-    fileIdModifier <- F.take 1
-    recordSize <- F.take 3
-    blockingFactor <- F.take 2
-    formatCode <- F.take 1
-    destination <- F.take 23
-    originOrCompanyName <- F.take 23
-    referenceCode <- F.take 8
-    pure AchFileHeaderRecord{..}
-
-  parseAchM :: ParserM AchFileHeaderRecord
-  parseAchM = do
+  parseAch :: Parser AchFileHeaderRecord
+  parseAch = do
     _ <- M.char (c2w '1')
     let recordTypeCode = Char8.singleton '1'
     priorityCode <- M.takeP Nothing 2

@@ -16,17 +16,11 @@ data AchBatchRecord
   deriving stock (Show, Eq)
 
 instance FromAch AchBatchRecord where
-  parseAchF :: ParserF AchBatchRecord
-  parseAchF = entryDetail <|> addenda
+  parseAch :: Parser AchBatchRecord
+  parseAch = entryDetail <|> addenda
     where
-    entryDetail = EntryDetail <$> parseAchF @AchEntryDetailRecord
-    addenda = Addenda <$> parseAchF @AchAddendaRecord
-
-  parseAchM :: ParserM AchBatchRecord
-  parseAchM = entryDetail <|> addenda
-    where
-    entryDetail = EntryDetail <$> parseAchM @AchEntryDetailRecord
-    addenda = Addenda <$> parseAchM @AchAddendaRecord
+    entryDetail = EntryDetail <$> parseAch @AchEntryDetailRecord
+    addenda = Addenda <$> parseAch @AchAddendaRecord
 
 instance ToAch AchBatchRecord where
   toAch :: AchBatchRecord -> ByteString

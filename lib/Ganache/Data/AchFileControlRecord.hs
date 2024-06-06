@@ -9,7 +9,6 @@ where
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
 import Data.ByteString.Internal (c2w)
-import FlatParse.Basic qualified as F
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
@@ -28,21 +27,8 @@ data AchFileControlRecord = AchFileControlRecord
   deriving stock (Show, Eq)
 
 instance FromAch AchFileControlRecord where
-  parseAchF :: ParserF AchFileControlRecord
-  parseAchF = do
-    $(F.char '9')
-    let recordTypeCode = Char8.singleton '9'
-    batchCount <- F.take 6
-    blockCount <- F.take 6
-    entryAndAddendaCount <- F.take 8
-    entryHash <- F.take 10
-    totalDebit <- F.take 12
-    totalCredit <- F.take 12
-    reserved <- F.take 39
-    pure AchFileControlRecord{..}
-
-  parseAchM :: ParserM AchFileControlRecord
-  parseAchM = do
+  parseAch :: Parser AchFileControlRecord
+  parseAch = do
     _ <- M.char (c2w '9')
     let recordTypeCode = Char8.singleton '9'
     batchCount <- M.takeP Nothing 6

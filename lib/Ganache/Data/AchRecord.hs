@@ -26,28 +26,16 @@ data AchRecord
   deriving stock (Show, Eq)
 
 instance FromAch AchRecord where
-  parseAchF :: ParserF AchRecord
-  parseAchF =
+  parseAch :: Parser AchRecord
+  parseAch =
     asum
-      [ FileHeader <$> parseAchF @AchFileHeaderRecord
-      , BatchHeader <$> parseAchF @AchBatchHeaderRecord
-      , EntryDetail <$> parseAchF @AchEntryDetailRecord
-      , Addenda <$> parseAchF @AchAddendaRecord
-      , BatchControl <$> parseAchF @AchBatchControlRecord
-      , FileControl <$> parseAchF @AchFileControlRecord
-      , FilePadding <$> parseAchF @AchFilePaddingRecord
-      ]
-
-  parseAchM :: ParserM AchRecord
-  parseAchM =
-    asum
-      [ FileHeader <$> parseAchM @AchFileHeaderRecord
-      , BatchHeader <$> parseAchM @AchBatchHeaderRecord
-      , EntryDetail <$> parseAchM @AchEntryDetailRecord
-      , Addenda <$> parseAchM @AchAddendaRecord
-      , BatchControl <$> parseAchM @AchBatchControlRecord
-      , FileControl <$> parseAchM @AchFileControlRecord
-      , FilePadding <$> parseAchM @AchFilePaddingRecord
+      [ FileHeader <$> parseAch @AchFileHeaderRecord
+      , BatchHeader <$> parseAch @AchBatchHeaderRecord
+      , EntryDetail <$> parseAch @AchEntryDetailRecord
+      , Addenda <$> parseAch @AchAddendaRecord
+      , BatchControl <$> parseAch @AchBatchControlRecord
+      , FileControl <$> parseAch @AchFileControlRecord
+      , FilePadding <$> parseAch @AchFilePaddingRecord
       ]
 
 instance ToAch AchRecord where
