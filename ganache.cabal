@@ -112,9 +112,7 @@ test-suite test
     , streamly-core
     , tasty
     , tasty-discover
-    , tasty-expected-failure
     , tasty-hunit
-    , unliftio
   other-modules:
     , GanacheTest
 
