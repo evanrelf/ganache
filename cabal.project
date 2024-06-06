@@ -1,3 +1,4 @@
 packages: .
+optimization: False
 tests: True
 benchmarks: True
