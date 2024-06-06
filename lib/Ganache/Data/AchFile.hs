@@ -8,7 +8,6 @@ where
 
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
-import Data.Maybe (fromMaybe)
 import FlatParse.Basic qualified as F
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
@@ -36,9 +35,9 @@ instance FromAch AchFile where
     header <- parseAchF @AchFileHeaderRecord <* $(F.char '\n')
     batches <- F.many (parseAchF @AchBatch)
     control <- parseAchF @AchFileControlRecord
-    padding <- fromMaybe 0 <$> F.optional do
-      $(F.char '\n')
-      length <$> parseAchF @AchFilePaddingRecord `M.sepEndBy` $(F.char '\n')
+    padding <- length <$>
+      F.many ($(F.char '\n') *> parseAchF @AchFilePaddingRecord)
+    F.skipMany $(F.char '\n')
     F.eof
     pure AchFile{..}
 
@@ -47,9 +46,9 @@ instance FromAch AchFile where
     header <- parseAchM @AchFileHeaderRecord <* M.newline
     batches <- M.many (parseAchM @AchBatch)
     control <- parseAchM @AchFileControlRecord
-    padding <- fromMaybe 0 <$> M.optional do
-      _ <- M.newline
-      length <$> parseAchM @AchFilePaddingRecord `M.sepEndBy` M.newline
+    padding <- length <$>
+      M.many (M.try (M.newline *> parseAchM @AchFilePaddingRecord))
+    M.skipMany M.newline
     M.eof
     pure AchFile{..}
 
