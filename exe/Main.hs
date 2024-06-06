@@ -1,5 +1,6 @@
 module Main (main) where
 
+import Control.Exception.Safe qualified as Exception
 import Ganache
 import Options
 import Text.Megaparsec qualified as Megaparsec
@@ -15,10 +16,11 @@ main = do
 parseMain :: ParseOptions -> IO ()
 parseMain parseOptions = do
   bytes <- readFileBS parseOptions.file
+  text <- either Exception.throwIO pure (decodeUtf8' bytes)
 
   putTextLn "Parsing..."
   achFile <-
-    case Megaparsec.runParser (parseAch @AchFile) parseOptions.file bytes of
+    case Megaparsec.runParser (parseAch @AchFile) parseOptions.file text of
       Left err ->
         die ("error: Parser error:\n" <> Megaparsec.errorBundlePretty err)
       Right achFile -> do

@@ -7,6 +7,7 @@ where
 
 import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as Char8
+import Data.Text qualified as Text
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec.Byte qualified as M
@@ -17,7 +18,7 @@ data AchFilePaddingRecord = AchFilePaddingRecord
 instance FromAch AchFilePaddingRecord where
   parseAch :: Parser AchFilePaddingRecord
   parseAch = do
-    _ <- M.string (Char8.replicate 94 '9')
+    _ <- M.string (Text.replicate 94 "9")
     pure AchFilePaddingRecord
 
 instance ToAch AchFilePaddingRecord where

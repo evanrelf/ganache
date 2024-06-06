@@ -1,7 +1,7 @@
 module GanacheTest (module GanacheTest) where
 
 import Control.Exception.Safe (MonadCatch)
-import Data.ByteString qualified as ByteString
+import Control.Exception.Safe qualified as Exception
 import Ganache
 import Streamly.Data.Stream (Stream)
 import Streamly.Data.Stream qualified as Stream
@@ -15,12 +15,16 @@ test_roundtripExamples :: IO [TestTree]
 test_roundtripExamples =
     readFilesRecursive "examples/"
   & Stream.filter (\path -> "ach" `FilePath.isExtensionOf` path)
-  & Stream.mapM (\path -> (path,) <$> ByteString.readFile path)
-  & fmap (\(path, bytes) ->
+  & Stream.mapM (\path -> do
+      bytes <- readFileBS path
+      text <- either Exception.throwIO pure (decodeUtf8' bytes)
+      pure (path, text)
+    )
+  & fmap (\(path, text) ->
       ( path
       , testCase path do
-          achFile <- parse @AchFile path bytes
-          assertEqual "Prints original file" bytes (toAch achFile)
+          achFile <- parse @AchFile path text
+          assertEqual "Prints original file" (encodeUtf8 text) (toAch achFile)
       )
     )
   & Stream.toList
@@ -34,9 +38,9 @@ readFilesRecursive root =
       Right file -> Stream.fromPure file
     )
 
-parse :: forall a. FromAch a => FilePath -> ByteString -> IO a
-parse path bytes =
-  case Megaparsec.runParser (parseAch @a) path bytes of
+parse :: forall a. FromAch a => FilePath -> Text -> IO a
+parse path text =
+  case Megaparsec.runParser (parseAch @a) path text of
     Left err ->
       assertFailure ("Parser error:\n" <> Megaparsec.errorBundlePretty err)
     Right x -> pure x

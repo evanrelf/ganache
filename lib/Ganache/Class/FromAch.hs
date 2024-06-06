@@ -4,11 +4,11 @@ module Ganache.Class.FromAch
   )
 where
 
-import Data.ByteString (ByteString)
+import Data.Text (Text)
 import Data.Void (Void)
 import Text.Megaparsec qualified as M
 
-type Parser = M.Parsec Void ByteString
+type Parser = M.Parsec Void Text
 
 class FromAch a where
   parseAch :: Parser a

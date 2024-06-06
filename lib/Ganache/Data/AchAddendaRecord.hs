@@ -6,23 +6,24 @@ module Ganache.Data.AchAddendaRecord
 where
 
 import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as Char8
-import Data.ByteString.Internal (c2w)
+import Data.Text (Text)
+import Data.Text qualified as Text
+import Data.Text.Encoding qualified as Text
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
-import Text.Megaparsec.Byte qualified as M
+import Text.Megaparsec.Char qualified as M
 
-newtype AchAddendaRecord = AchAddendaRecord ByteString
+newtype AchAddendaRecord = AchAddendaRecord Text
   deriving stock (Show, Eq)
 
 instance FromAch AchAddendaRecord where
   parseAch :: Parser AchAddendaRecord
   parseAch = do
-    _ <- M.char (c2w '7')
-    bytes <- M.takeP Nothing 93
-    pure $ AchAddendaRecord bytes
+    _ <- M.char '7'
+    text <- M.takeP Nothing 93
+    pure $ AchAddendaRecord text
 
 instance ToAch AchAddendaRecord where
   toAch :: AchAddendaRecord -> ByteString
-  toAch (AchAddendaRecord bytes) = Char8.cons '7' bytes
+  toAch (AchAddendaRecord text) = Text.encodeUtf8 ('7' `Text.cons` text)

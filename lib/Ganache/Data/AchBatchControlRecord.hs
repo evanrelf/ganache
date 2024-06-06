@@ -7,33 +7,34 @@ module Ganache.Data.AchBatchControlRecord
 where
 
 import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as Char8
-import Data.ByteString.Internal (c2w)
+import Data.Text (Text)
+import Data.Text qualified as Text
+import Data.Text.Encoding qualified as Text
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
-import Text.Megaparsec.Byte qualified as M
+import Text.Megaparsec.Char qualified as M
 
 data AchBatchControlRecord = AchBatchControlRecord
-  { recordTypeCode :: !ByteString
-  , serviceClassCode :: !ByteString
-  , entryAndAddendaCount :: !ByteString
-  , entryHash :: !ByteString
-  , totalDebit :: !ByteString
-  , totalCredit :: !ByteString
-  , companyIdentification :: !ByteString
-  , messageAuthenticationCode :: !ByteString
-  , reserved :: !ByteString
-  , originatingDfiIdentification :: !ByteString
-  , batchNumber :: !ByteString
+  { recordTypeCode :: !Text
+  , serviceClassCode :: !Text
+  , entryAndAddendaCount :: !Text
+  , entryHash :: !Text
+  , totalDebit :: !Text
+  , totalCredit :: !Text
+  , companyIdentification :: !Text
+  , messageAuthenticationCode :: !Text
+  , reserved :: !Text
+  , originatingDfiIdentification :: !Text
+  , batchNumber :: !Text
   }
   deriving stock (Show, Eq)
 
 instance FromAch AchBatchControlRecord where
   parseAch :: Parser AchBatchControlRecord
   parseAch = do
-    _ <- M.char (c2w '8')
-    let recordTypeCode = Char8.singleton '8'
+    _ <- M.char '8'
+    let recordTypeCode = Text.singleton '8'
     serviceClassCode <- M.takeP Nothing 3
     entryAndAddendaCount <- M.takeP Nothing 6
     entryHash <- M.takeP Nothing 10
@@ -49,16 +50,17 @@ instance FromAch AchBatchControlRecord where
 instance ToAch AchBatchControlRecord where
   toAch :: AchBatchControlRecord -> ByteString
   toAch x =
-    mconcat
-      [ x.recordTypeCode
-      , x.serviceClassCode
-      , x.entryAndAddendaCount
-      , x.entryHash
-      , x.totalDebit
-      , x.totalCredit
-      , x.companyIdentification
-      , x.messageAuthenticationCode
-      , x.reserved
-      , x.originatingDfiIdentification
-      , x.batchNumber
-      ]
+    Text.encodeUtf8
+      (mconcat
+        [ x.recordTypeCode
+        , x.serviceClassCode
+        , x.entryAndAddendaCount
+        , x.entryHash
+        , x.totalDebit
+        , x.totalCredit
+        , x.companyIdentification
+        , x.messageAuthenticationCode
+        , x.reserved
+        , x.originatingDfiIdentification
+        , x.batchNumber
+        ])

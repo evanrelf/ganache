@@ -15,7 +15,7 @@ import Ganache.Data.AchFileControlRecord (AchFileControlRecord (..))
 import Ganache.Data.AchFileHeaderRecord (AchFileHeaderRecord (..))
 import Ganache.Data.AchFilePaddingRecord (AchFilePaddingRecord (..))
 import Text.Megaparsec qualified as M
-import Text.Megaparsec.Byte qualified as M
+import Text.Megaparsec.Char qualified as M
 
 -- TODO: Limit number of padding records to match spec
 -- TODO: Handle weird line endings

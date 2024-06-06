@@ -7,30 +7,31 @@ module Ganache.Data.AchFileControlRecord
 where
 
 import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as Char8
-import Data.ByteString.Internal (c2w)
+import Data.Text (Text)
+import Data.Text qualified as Text
+import Data.Text.Encoding qualified as Text
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
-import Text.Megaparsec.Byte qualified as M
+import Text.Megaparsec.Char qualified as M
 
 data AchFileControlRecord = AchFileControlRecord
-  { recordTypeCode :: !ByteString
-  , batchCount :: !ByteString
-  , blockCount :: !ByteString
-  , entryAndAddendaCount :: !ByteString
-  , entryHash :: !ByteString
-  , totalDebit :: !ByteString
-  , totalCredit :: !ByteString
-  , reserved :: !ByteString
+  { recordTypeCode :: !Text
+  , batchCount :: !Text
+  , blockCount :: !Text
+  , entryAndAddendaCount :: !Text
+  , entryHash :: !Text
+  , totalDebit :: !Text
+  , totalCredit :: !Text
+  , reserved :: !Text
   }
   deriving stock (Show, Eq)
 
 instance FromAch AchFileControlRecord where
   parseAch :: Parser AchFileControlRecord
   parseAch = do
-    _ <- M.char (c2w '9')
-    let recordTypeCode = Char8.singleton '9'
+    _ <- M.char '9'
+    let recordTypeCode = Text.singleton '9'
     batchCount <- M.takeP Nothing 6
     blockCount <- M.takeP Nothing 6
     entryAndAddendaCount <- M.takeP Nothing 8
@@ -43,13 +44,14 @@ instance FromAch AchFileControlRecord where
 instance ToAch AchFileControlRecord where
   toAch :: AchFileControlRecord -> ByteString
   toAch x =
-    mconcat
-      [ x.recordTypeCode
-      , x.batchCount
-      , x.blockCount
-      , x.entryAndAddendaCount
-      , x.entryHash
-      , x.totalDebit
-      , x.totalCredit
-      , x.reserved
-      ]
+    Text.encodeUtf8
+      (mconcat
+        [ x.recordTypeCode
+        , x.batchCount
+        , x.blockCount
+        , x.entryAndAddendaCount
+        , x.entryHash
+        , x.totalDebit
+        , x.totalCredit
+        , x.reserved
+        ])
