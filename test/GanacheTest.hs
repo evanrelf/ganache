@@ -22,18 +22,14 @@ test_roundtripExamples =
       , testGroup path
           [ testCase "flatparse" do
               achFile <- flatparse @AchFile bytes
-              pure ()
-              -- TODO: Re-enable printing test
-              -- assertEqual "Prints original file" bytes (toAch achFile)
+              assertEqual "Prints original file" bytes (toAch achFile)
           , testCase "megaparsec" do
               achFile <- megaparsec @AchFile path bytes
-              pure ()
-              -- TODO: Re-enable printing test
-              -- assertEqual "Prints original file" bytes (toAch achFile)
+              assertEqual "Prints original file" bytes (toAch achFile)
           , testCase "flatparse and megaparsec agree" do
               achFileF <- flatparse @AchFile bytes
               achFileM <- megaparsec @AchFile path bytes
-              assertEqual "flatparse and megaparsec agree" achFileF achFileM
+              achFileF @=? achFileM
           ]
       )
     )

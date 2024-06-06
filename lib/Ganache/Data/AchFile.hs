@@ -18,14 +18,15 @@ import Ganache.Data.AchFilePaddingRecord (AchFilePaddingRecord (..))
 import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
--- TODO: Count trailing newlines
 -- TODO: Limit number of padding records to match spec
+-- TODO: Handle weird line endings
 
 data AchFile = AchFile
   { header :: !AchFileHeaderRecord
   , batches :: ![AchBatch]
   , control :: !AchFileControlRecord
   , padding :: !Int
+  , newlines :: !Int
   }
   deriving stock (Show, Eq)
 
@@ -37,7 +38,7 @@ instance FromAch AchFile where
     control <- parseAchF @AchFileControlRecord
     padding <- length <$>
       F.many ($(F.char '\n') *> parseAchF @AchFilePaddingRecord)
-    F.skipMany $(F.char '\n')
+    newlines <- length <$> F.many $(F.char '\n')
     F.eof
     pure AchFile{..}
 
@@ -48,20 +49,18 @@ instance FromAch AchFile where
     control <- parseAchM @AchFileControlRecord
     padding <- length <$>
       M.many (M.try (M.newline *> parseAchM @AchFilePaddingRecord))
-    M.skipMany M.newline
+    newlines <- length <$> M.many M.newline
     M.eof
     pure AchFile{..}
 
 instance ToAch AchFile where
   toAch :: AchFile -> ByteString
   toAch x =
-    Char8.unlines
-      [ toAch @AchFileHeaderRecord x.header
-      , Char8.intercalate
-          (Char8.singleton '\n')
-          (fmap (toAch @AchBatch) x.batches)
+    mconcat
+      [ toAch @AchFileHeaderRecord x.header <> Char8.singleton '\n'
+      , Char8.unlines (fmap (toAch @AchBatch) x.batches)
       , toAch @AchFileControlRecord x.control
-      , Char8.intercalate
-          (Char8.singleton '\n')
-          (replicate x.padding (toAch AchFilePaddingRecord))
+      , mconcat
+          (replicate x.padding ('\n' `Char8.cons` toAch AchFilePaddingRecord))
+      , Char8.replicate x.newlines '\n'
       ]
