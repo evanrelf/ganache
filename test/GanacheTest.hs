@@ -18,12 +18,14 @@ test_roundtripExamples =
   & Stream.mapM (\path -> do
       bytes <- readFileBS path
       text <- either Exception.throwIO pure (decodeUtf8' bytes)
-      pure
-        ( path
-        , testCase path do
-            achFile <- parse @AchFile path text
-            assertEqual "Prints original file" text (toAch achFile)
-        )
+      pure (path, text)
+    )
+  & fmap (\(path, text) ->
+      ( path
+      , testCase path do
+          achFile <- parse @AchFile path text
+          assertEqual "Prints original file" text (toAch achFile)
+      )
     )
   & Stream.toList
   & fmap (sortOn fst >>> fmap snd)
