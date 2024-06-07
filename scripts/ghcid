@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+IFS=$'\n\t'
+
+# @describe Totally the real `ghcid` I swear
+# @option --target[=lib|exe|test|bench]
+eval "$(argc --argc-eval "$0" "$@")"
+
+# shellcheck disable=SC2154
+case "$argc_target" in
+  "lib") component="ganache:lib:ganache";;
+  "exe") component="ganache:exe:ganache";;
+  "test") component="ganache:test:test";;
+  "bench") component="ganache:bench:bench";;
+esac
+watch="$argc_target"
+
+ghciwatch \
+  --command "\
+      cabal repl $component \
+        --repl-options=-fno-code \
+        --repl-options=-fno-break-on-exception \
+        --repl-options=-fno-break-on-error \
+        --repl-options=-v1 \
+        --repl-options=-ferror-spans \
+        --repl-options=-j \
+    " \
+  --enable-eval \
+  --clear \
+  --debounce "100ms" \
+  --watch "$watch/"

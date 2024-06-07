@@ -32,10 +32,14 @@
           pkgs.mkShell {
             inputsFrom = [ config.packages.ganache.env ];
             packages = [
+              pkgs.argc
               pkgs.cabal-install
-              pkgs.ghcid
+              pkgs.ghciwatch
               pkgs.nixpkgs-fmt
             ];
+            shellHook = ''
+              export PATH="$PWD/scripts:$PATH"
+            '';
           };
       };
     };
