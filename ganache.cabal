@@ -57,6 +57,7 @@ library
   import: common
   hs-source-dirs: lib
   build-depends:
+    , bytestring
     , megaparsec
     , text
   exposed-modules:
@@ -84,6 +85,7 @@ executable ganache
   hs-source-dirs: exe
   main-is: Main.hs
   build-depends:
+    , bytestring
     , ganache
     , megaparsec
     , optparse-applicative
@@ -101,6 +103,7 @@ test-suite test
   main-is: Driver.hs
   hs-source-dirs: test
   build-depends:
+    , bytestring
     , filepath
     , ganache
     , megaparsec

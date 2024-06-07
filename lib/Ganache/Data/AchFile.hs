@@ -6,8 +6,8 @@ module Ganache.Data.AchFile
   )
 where
 
-import Data.Text (Text)
-import Data.Text qualified as Text
+import Data.ByteString (ByteString)
+import Data.ByteString.Char8 qualified as Char8
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Ganache.Data.AchBatch (AchBatch (..))
@@ -42,13 +42,13 @@ instance FromAch AchFile where
     pure AchFile{..}
 
 instance ToAch AchFile where
-  toAch :: AchFile -> Text
+  toAch :: AchFile -> ByteString
   toAch x =
     mconcat
-      [ toAch @AchFileHeaderRecord x.header <> Text.singleton '\n'
-      , Text.unlines (fmap (toAch @AchBatch) x.batches)
+      [ toAch @AchFileHeaderRecord x.header <> Char8.singleton '\n'
+      , Char8.unlines (fmap (toAch @AchBatch) x.batches)
       , toAch @AchFileControlRecord x.control
       , mconcat
-          (replicate x.padding ('\n' `Text.cons` toAch AchFilePaddingRecord))
-      , Text.replicate x.newlines "\n"
+          (replicate x.padding ('\n' `Char8.cons` toAch AchFilePaddingRecord))
+      , Char8.replicate x.newlines '\n'
       ]

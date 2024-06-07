@@ -5,7 +5,8 @@ module Ganache.Data.AchFilePaddingRecord
   )
 where
 
-import Data.Text (Text)
+import Data.ByteString (ByteString)
+import Data.ByteString.Char8 qualified as Char8
 import Data.Text qualified as Text
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
@@ -21,5 +22,5 @@ instance FromAch AchFilePaddingRecord where
     pure AchFilePaddingRecord
 
 instance ToAch AchFilePaddingRecord where
-  toAch :: AchFilePaddingRecord -> Text
-  toAch _ = Text.replicate 94 "9"
+  toAch :: AchFilePaddingRecord -> ByteString
+  toAch _ = Char8.replicate 94 '9'

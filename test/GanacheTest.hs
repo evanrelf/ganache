@@ -24,7 +24,7 @@ test_roundtripExamples =
       ( path
       , testCase path do
           achFile <- parse @AchFile path text
-          assertEqual "Prints original file" text (toAch achFile)
+          assertEqual "Prints original file" (encodeUtf8 text) (toAch achFile)
       )
     )
   & Stream.toList

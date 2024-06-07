@@ -5,8 +5,10 @@ module Ganache.Data.AchEntryDetailRecord
   )
 where
 
+import Data.ByteString (ByteString)
 import Data.Text (Text)
 import Data.Text qualified as Text
+import Data.Text.Encoding qualified as Text
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
@@ -23,5 +25,5 @@ instance FromAch AchEntryDetailRecord where
     pure $ AchEntryDetailRecord text
 
 instance ToAch AchEntryDetailRecord where
-  toAch :: AchEntryDetailRecord -> Text
-  toAch (AchEntryDetailRecord text) = '6' `Text.cons` text
+  toAch :: AchEntryDetailRecord -> ByteString
+  toAch (AchEntryDetailRecord text) = Text.encodeUtf8 ('6' `Text.cons` text)

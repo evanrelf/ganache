@@ -4,7 +4,7 @@ module Ganache.Data.AchBatchRecord
 where
 
 import Control.Applicative ((<|>))
-import Data.Text (Text)
+import Data.ByteString (ByteString)
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Ganache.Data.AchAddendaRecord (AchAddendaRecord (..))
@@ -23,7 +23,7 @@ instance FromAch AchBatchRecord where
     addenda = Addenda <$> parseAch @AchAddendaRecord
 
 instance ToAch AchBatchRecord where
-  toAch :: AchBatchRecord -> Text
+  toAch :: AchBatchRecord -> ByteString
   toAch = \case
     EntryDetail x -> toAch @AchEntryDetailRecord x
     Addenda x -> toAch @AchAddendaRecord x

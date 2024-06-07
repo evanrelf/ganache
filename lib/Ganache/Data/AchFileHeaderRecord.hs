@@ -6,8 +6,10 @@ module Ganache.Data.AchFileHeaderRecord
   )
 where
 
+import Data.ByteString (ByteString)
 import Data.Text (Text)
 import Data.Text qualified as Text
+import Data.Text.Encoding qualified as Text
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
@@ -50,20 +52,21 @@ instance FromAch AchFileHeaderRecord where
     pure AchFileHeaderRecord{..}
 
 instance ToAch AchFileHeaderRecord where
-  toAch :: AchFileHeaderRecord -> Text
+  toAch :: AchFileHeaderRecord -> ByteString
   toAch x =
-    mconcat
-      [ x.recordTypeCode
-      , x.priorityCode
-      , x.immediateDestination
-      , x.immediateOrigin
-      , x.fileCreationDate
-      , x.fileCreationTime
-      , x.fileIdModifier
-      , x.recordSize
-      , x.blockingFactor
-      , x.formatCode
-      , x.destination
-      , x.originOrCompanyName
-      , x.referenceCode
-      ]
+    Text.encodeUtf8
+      (mconcat
+        [ x.recordTypeCode
+        , x.priorityCode
+        , x.immediateDestination
+        , x.immediateOrigin
+        , x.fileCreationDate
+        , x.fileCreationTime
+        , x.fileIdModifier
+        , x.recordSize
+        , x.blockingFactor
+        , x.formatCode
+        , x.destination
+        , x.originOrCompanyName
+        , x.referenceCode
+        ])

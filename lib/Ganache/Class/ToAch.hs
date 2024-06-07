@@ -3,7 +3,7 @@ module Ganache.Class.ToAch
   )
 where
 
-import Data.Text (Text)
+import Data.ByteString (ByteString)
 
 class ToAch a where
-  toAch :: a -> Text
+  toAch :: a -> ByteString
