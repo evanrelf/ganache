@@ -7,36 +7,35 @@ module Ganache.Data.AchFileHeaderRecord
 where
 
 import Data.ByteString (ByteString)
-import Data.Text (Text)
-import Data.Text qualified as Text
-import Data.Text.Encoding qualified as Text
+import Data.ByteString.Char8 qualified as Char8
+import Data.ByteString.Internal (c2w)
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
-import Text.Megaparsec.Char qualified as M
+import Text.Megaparsec.Byte qualified as M
 
 data AchFileHeaderRecord = AchFileHeaderRecord
-  { recordTypeCode :: !Text
-  , priorityCode :: !Text
-  , immediateDestination :: !Text
-  , immediateOrigin :: !Text
-  , fileCreationDate :: !Text
-  , fileCreationTime :: !Text
-  , fileIdModifier :: !Text
-  , recordSize :: !Text
-  , blockingFactor :: !Text
-  , formatCode :: !Text
-  , destination :: !Text
-  , originOrCompanyName :: !Text
-  , referenceCode :: !Text
+  { recordTypeCode :: !ByteString
+  , priorityCode :: !ByteString
+  , immediateDestination :: !ByteString
+  , immediateOrigin :: !ByteString
+  , fileCreationDate :: !ByteString
+  , fileCreationTime :: !ByteString
+  , fileIdModifier :: !ByteString
+  , recordSize :: !ByteString
+  , blockingFactor :: !ByteString
+  , formatCode :: !ByteString
+  , destination :: !ByteString
+  , originOrCompanyName :: !ByteString
+  , referenceCode :: !ByteString
   }
   deriving stock (Show, Eq)
 
 instance FromAch AchFileHeaderRecord where
   parseAch :: Parser AchFileHeaderRecord
   parseAch = do
-    _ <- M.char '1'
-    let recordTypeCode = Text.singleton '1'
+    _ <- M.char (c2w '1')
+    let recordTypeCode = Char8.singleton '1'
     priorityCode <- M.takeP Nothing 2
     immediateDestination <- M.takeP Nothing 10
     immediateOrigin <- M.takeP Nothing 10
@@ -54,19 +53,18 @@ instance FromAch AchFileHeaderRecord where
 instance ToAch AchFileHeaderRecord where
   toAch :: AchFileHeaderRecord -> ByteString
   toAch x =
-    Text.encodeUtf8
-      (mconcat
-        [ x.recordTypeCode
-        , x.priorityCode
-        , x.immediateDestination
-        , x.immediateOrigin
-        , x.fileCreationDate
-        , x.fileCreationTime
-        , x.fileIdModifier
-        , x.recordSize
-        , x.blockingFactor
-        , x.formatCode
-        , x.destination
-        , x.originOrCompanyName
-        , x.referenceCode
-        ])
+    mconcat
+      [ x.recordTypeCode
+      , x.priorityCode
+      , x.immediateDestination
+      , x.immediateOrigin
+      , x.fileCreationDate
+      , x.fileCreationTime
+      , x.fileIdModifier
+      , x.recordSize
+      , x.blockingFactor
+      , x.formatCode
+      , x.destination
+      , x.originOrCompanyName
+      , x.referenceCode
+      ]

@@ -14,7 +14,7 @@ import Ganache.Data.AchBatchControlRecord (AchBatchControlRecord (..))
 import Ganache.Data.AchBatchHeaderRecord (AchBatchHeaderRecord (..))
 import Ganache.Data.AchBatchRecord (AchBatchRecord (..))
 import Text.Megaparsec qualified as M
-import Text.Megaparsec.Char qualified as M
+import Text.Megaparsec.Byte qualified as M
 
 -- TODO: Handle weird line endings
 

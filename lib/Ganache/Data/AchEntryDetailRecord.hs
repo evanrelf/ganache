@@ -6,24 +6,23 @@ module Ganache.Data.AchEntryDetailRecord
 where
 
 import Data.ByteString (ByteString)
-import Data.Text (Text)
-import Data.Text qualified as Text
-import Data.Text.Encoding qualified as Text
+import Data.ByteString.Char8 qualified as Char8
+import Data.ByteString.Internal (c2w)
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
-import Text.Megaparsec.Char qualified as M
+import Text.Megaparsec.Byte qualified as M
 
-newtype AchEntryDetailRecord = AchEntryDetailRecord Text
+newtype AchEntryDetailRecord = AchEntryDetailRecord ByteString
   deriving stock (Show, Eq)
 
 instance FromAch AchEntryDetailRecord where
   parseAch :: Parser AchEntryDetailRecord
   parseAch = do
-    _ <- M.char '6'
-    text <- M.takeP Nothing 93
-    pure $ AchEntryDetailRecord text
+    _ <- M.char (c2w '6')
+    bytes <- M.takeP Nothing 93
+    pure $ AchEntryDetailRecord bytes
 
 instance ToAch AchEntryDetailRecord where
   toAch :: AchEntryDetailRecord -> ByteString
-  toAch (AchEntryDetailRecord text) = Text.encodeUtf8 ('6' `Text.cons` text)
+  toAch (AchEntryDetailRecord bytes) = Char8.cons '6' bytes
