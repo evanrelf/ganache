@@ -6,8 +6,8 @@ module Ganache.Data.AchBatch
   )
 where
 
-import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as Char8
+import Data.Text (Text)
+import Data.Text qualified as Text
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Ganache.Data.AchBatchControlRecord (AchBatchControlRecord (..))
@@ -34,13 +34,13 @@ instance FromAch AchBatch where
     pure AchBatch{..}
 
 instance ToAch AchBatch where
-  toAch :: AchBatch -> ByteString
+  toAch :: AchBatch -> Text
   toAch x =
-    Char8.intercalate
-      (Char8.singleton '\n')
+    Text.intercalate
+      (Text.singleton '\n')
       [ toAch @AchBatchHeaderRecord x.header
-      , Char8.intercalate
-          (Char8.singleton '\n')
+      , Text.intercalate
+          (Text.singleton '\n')
           (fmap (toAch @AchBatchRecord) x.records)
       , toAch @AchBatchControlRecord x.control
       ]

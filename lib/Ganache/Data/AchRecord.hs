@@ -4,7 +4,7 @@ module Ganache.Data.AchRecord
 where
 
 import Control.Applicative (asum)
-import Data.ByteString (ByteString)
+import Data.Text (Text)
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Ganache.Data.AchAddendaRecord (AchAddendaRecord (..))
@@ -39,7 +39,7 @@ instance FromAch AchRecord where
       ]
 
 instance ToAch AchRecord where
-  toAch :: AchRecord -> ByteString
+  toAch :: AchRecord -> Text
   toAch = \case
     FileHeader x -> toAch @AchFileHeaderRecord x
     BatchHeader x -> toAch @AchBatchHeaderRecord x

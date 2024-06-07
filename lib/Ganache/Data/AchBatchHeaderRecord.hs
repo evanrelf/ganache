@@ -5,10 +5,8 @@ module Ganache.Data.AchBatchHeaderRecord
   )
 where
 
-import Data.ByteString (ByteString)
 import Data.Text (Text)
 import Data.Text qualified as Text
-import Data.Text.Encoding qualified as Text
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
@@ -25,5 +23,5 @@ instance FromAch AchBatchHeaderRecord where
     pure $ AchBatchHeaderRecord text
 
 instance ToAch AchBatchHeaderRecord where
-  toAch :: AchBatchHeaderRecord -> ByteString
-  toAch (AchBatchHeaderRecord text) = Text.encodeUtf8 ('5' `Text.cons` text)
+  toAch :: AchBatchHeaderRecord -> Text
+  toAch (AchBatchHeaderRecord text) = '5' `Text.cons` text

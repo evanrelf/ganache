@@ -6,10 +6,8 @@ module Ganache.Data.AchFileControlRecord
   )
 where
 
-import Data.ByteString (ByteString)
 import Data.Text (Text)
 import Data.Text qualified as Text
-import Data.Text.Encoding qualified as Text
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
@@ -42,16 +40,15 @@ instance FromAch AchFileControlRecord where
     pure AchFileControlRecord{..}
 
 instance ToAch AchFileControlRecord where
-  toAch :: AchFileControlRecord -> ByteString
+  toAch :: AchFileControlRecord -> Text
   toAch x =
-    Text.encodeUtf8
-      (mconcat
-        [ x.recordTypeCode
-        , x.batchCount
-        , x.blockCount
-        , x.entryAndAddendaCount
-        , x.entryHash
-        , x.totalDebit
-        , x.totalCredit
-        , x.reserved
-        ])
+    mconcat
+      [ x.recordTypeCode
+      , x.batchCount
+      , x.blockCount
+      , x.entryAndAddendaCount
+      , x.entryHash
+      , x.totalDebit
+      , x.totalCredit
+      , x.reserved
+      ]
