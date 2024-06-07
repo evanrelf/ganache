@@ -59,6 +59,7 @@ library
   build-depends:
     , bytestring
     , megaparsec
+    , text
   exposed-modules:
     , Ganache
     , Ganache.Class.FromAch
@@ -75,6 +76,7 @@ library
     , Ganache.Data.AchFileHeaderRecord
     , Ganache.Data.AchFilePaddingRecord
     , Ganache.Data.AchRecord
+    , Ganache.Spec
 
 executable ganache
   import:
