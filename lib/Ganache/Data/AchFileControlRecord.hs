@@ -7,15 +7,16 @@ module Ganache.Data.AchFileControlRecord
 where
 
 import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as Char8
+import Data.ByteString qualified as ByteString
 import Data.ByteString.Internal (c2w)
+import Data.Word (Word8)
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
 data AchFileControlRecord = AchFileControlRecord
-  { recordTypeCode :: !ByteString
+  { recordTypeCode :: !Word8
   , batchCount :: !ByteString
   , blockCount :: !ByteString
   , entryAndAddendaCount :: !ByteString
@@ -29,8 +30,7 @@ data AchFileControlRecord = AchFileControlRecord
 instance FromAch AchFileControlRecord where
   parseAch :: Parser AchFileControlRecord
   parseAch = do
-    _ <- M.char (c2w '9')
-    let recordTypeCode = Char8.singleton '9'
+    recordTypeCode <- M.char (c2w '9')
     batchCount <- M.takeP Nothing 6
     blockCount <- M.takeP Nothing 6
     entryAndAddendaCount <- M.takeP Nothing 8
@@ -44,7 +44,7 @@ instance ToAch AchFileControlRecord where
   toAch :: AchFileControlRecord -> ByteString
   toAch x =
     mconcat
-      [ x.recordTypeCode
+      [ ByteString.singleton x.recordTypeCode
       , x.batchCount
       , x.blockCount
       , x.entryAndAddendaCount

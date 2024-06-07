@@ -6,7 +6,7 @@ module Ganache.Data.AchAddendaRecord
 where
 
 import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as Char8
+import Data.ByteString qualified as ByteString
 import Data.ByteString.Internal (c2w)
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
@@ -19,10 +19,10 @@ newtype AchAddendaRecord = AchAddendaRecord ByteString
 instance FromAch AchAddendaRecord where
   parseAch :: Parser AchAddendaRecord
   parseAch = do
-    _ <- M.char (c2w '7')
-    bytes <- M.takeP Nothing 93
-    pure $ AchAddendaRecord bytes
+    b <- M.char (c2w '7')
+    bs <- M.takeP Nothing 93
+    pure $ AchAddendaRecord (b `ByteString.cons` bs)
 
 instance ToAch AchAddendaRecord where
   toAch :: AchAddendaRecord -> ByteString
-  toAch (AchAddendaRecord bytes) = Char8.cons '7' bytes
+  toAch (AchAddendaRecord bytes) = bytes

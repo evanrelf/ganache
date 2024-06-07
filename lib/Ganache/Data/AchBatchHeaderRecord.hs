@@ -6,7 +6,7 @@ module Ganache.Data.AchBatchHeaderRecord
 where
 
 import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as Char8
+import Data.ByteString qualified as ByteString
 import Data.ByteString.Internal (c2w)
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
@@ -19,10 +19,10 @@ newtype AchBatchHeaderRecord = AchBatchHeaderRecord ByteString
 instance FromAch AchBatchHeaderRecord where
   parseAch :: Parser AchBatchHeaderRecord
   parseAch = do
-    _ <- M.char (c2w '5')
-    bytes <- M.takeP Nothing 93
-    pure $ AchBatchHeaderRecord bytes
+    b <- M.char (c2w '5')
+    bs <- M.takeP Nothing 93
+    pure $ AchBatchHeaderRecord (b `ByteString.cons` bs)
 
 instance ToAch AchBatchHeaderRecord where
   toAch :: AchBatchHeaderRecord -> ByteString
-  toAch (AchBatchHeaderRecord bytes) = Char8.cons '5' bytes
+  toAch (AchBatchHeaderRecord bytes) = bytes

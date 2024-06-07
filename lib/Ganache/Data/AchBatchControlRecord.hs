@@ -7,15 +7,16 @@ module Ganache.Data.AchBatchControlRecord
 where
 
 import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as Char8
+import Data.ByteString qualified as ByteString
 import Data.ByteString.Internal (c2w)
+import Data.Word (Word8)
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
 data AchBatchControlRecord = AchBatchControlRecord
-  { recordTypeCode :: !ByteString
+  { recordTypeCode :: !Word8
   , serviceClassCode :: !ByteString
   , entryAndAddendaCount :: !ByteString
   , entryHash :: !ByteString
@@ -32,8 +33,7 @@ data AchBatchControlRecord = AchBatchControlRecord
 instance FromAch AchBatchControlRecord where
   parseAch :: Parser AchBatchControlRecord
   parseAch = do
-    _ <- M.char (c2w '8')
-    let recordTypeCode = Char8.singleton '8'
+    recordTypeCode <- M.char (c2w '8')
     serviceClassCode <- M.takeP Nothing 3
     entryAndAddendaCount <- M.takeP Nothing 6
     entryHash <- M.takeP Nothing 10
@@ -50,7 +50,7 @@ instance ToAch AchBatchControlRecord where
   toAch :: AchBatchControlRecord -> ByteString
   toAch x =
     mconcat
-      [ x.recordTypeCode
+      [ ByteString.singleton x.recordTypeCode
       , x.serviceClassCode
       , x.entryAndAddendaCount
       , x.entryHash

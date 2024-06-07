@@ -1,7 +1,6 @@
 module GanacheTest (module GanacheTest) where
 
 import Control.Exception.Safe (MonadCatch)
-import Data.ByteString qualified as ByteString
 import Ganache
 import Streamly.Data.Stream (Stream)
 import Streamly.Data.Stream qualified as Stream
@@ -15,7 +14,7 @@ test_roundtripExamples :: IO [TestTree]
 test_roundtripExamples =
     readFilesRecursive "examples/"
   & Stream.filter (\path -> "ach" `FilePath.isExtensionOf` path)
-  & Stream.mapM (\path -> (path,) <$> ByteString.readFile path)
+  & Stream.mapM (\path -> (path,) <$> readFileBS path)
   & fmap (\(path, bytes) ->
       ( path
       , testCase path do

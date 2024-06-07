@@ -7,15 +7,16 @@ module Ganache.Data.AchFileHeaderRecord
 where
 
 import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as Char8
+import Data.ByteString qualified as ByteString
 import Data.ByteString.Internal (c2w)
+import Data.Word (Word8)
 import Ganache.Class.FromAch
 import Ganache.Class.ToAch
 import Text.Megaparsec qualified as M
 import Text.Megaparsec.Byte qualified as M
 
 data AchFileHeaderRecord = AchFileHeaderRecord
-  { recordTypeCode :: !ByteString
+  { recordTypeCode :: !Word8
   , priorityCode :: !ByteString
   , immediateDestination :: !ByteString
   , immediateOrigin :: !ByteString
@@ -34,8 +35,7 @@ data AchFileHeaderRecord = AchFileHeaderRecord
 instance FromAch AchFileHeaderRecord where
   parseAch :: Parser AchFileHeaderRecord
   parseAch = do
-    _ <- M.char (c2w '1')
-    let recordTypeCode = Char8.singleton '1'
+    recordTypeCode <- M.char (c2w '1')
     priorityCode <- M.takeP Nothing 2
     immediateDestination <- M.takeP Nothing 10
     immediateOrigin <- M.takeP Nothing 10
@@ -54,7 +54,7 @@ instance ToAch AchFileHeaderRecord where
   toAch :: AchFileHeaderRecord -> ByteString
   toAch x =
     mconcat
-      [ x.recordTypeCode
+      [ ByteString.singleton x.recordTypeCode
       , x.priorityCode
       , x.immediateDestination
       , x.immediateOrigin
