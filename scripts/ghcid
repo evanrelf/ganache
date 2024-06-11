@@ -19,12 +19,13 @@ watch="$argc_target"
 ghciwatch \
   --command "\
       cabal repl $component \
-        --repl-options=-fno-code \
-        --repl-options=-fno-break-on-exception \
-        --repl-options=-fno-break-on-error \
-        --repl-options=-v1 \
+        --repl-options=-fdiagnostics-color=always \
         --repl-options=-ferror-spans \
+        --repl-options=-fno-break-on-error \
+        --repl-options=-fno-break-on-exception \
+        --repl-options=-fno-code \
         --repl-options=-j \
+        --repl-options=-v1 \
     " \
   --enable-eval \
   --clear \
