@@ -30,4 +30,6 @@ ghciwatch \
   --enable-eval \
   --clear \
   --debounce "100ms" \
+  --watch "cabal.project" \
+  --watch "ganache.cabal" \
   --watch "$watch/"
