@@ -3,6 +3,10 @@
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
+    ghciwatch-compat = {
+      url = "github:evanrelf/ghciwatch-compat";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     haskell-overlay.url = "github:evanrelf/haskell-overlay";
     nixpkgs.url = "github:NixOS/nixpkgs";
     systems.url = "github:nix-systems/default";
@@ -17,6 +21,7 @@
           import inputs.nixpkgs {
             localSystem = system;
             overlays = [
+              inputs.ghciwatch-compat.overlays.default
               inputs.haskell-overlay.overlay
               (import ./nix/overlays/haskell-packages.nix)
             ];
@@ -32,14 +37,10 @@
           pkgs.mkShell {
             inputsFrom = [ config.packages.ganache.env ];
             packages = [
-              pkgs.argc
               pkgs.cabal-install
-              pkgs.ghciwatch
+              pkgs.ghciwatch-compat-ghcid
               pkgs.nixpkgs-fmt
             ];
-            shellHook = ''
-              export PATH="$PWD/scripts:$PATH"
-            '';
           };
       };
     };
